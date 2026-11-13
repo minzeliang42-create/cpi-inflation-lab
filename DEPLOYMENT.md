@@ -1,3 +1,3 @@
-# CPI Inflation Distribution & Dispersion
+# Deployment
 
-Public CPI research website for a fixed universe of 68 BLS expenditure classes. Initial deployment in progress.
+Owner-approved public website. The first workflow run imports the existing reviewed project and seed data, runs validation, checks BLS, and publishes GitHub Pages.
