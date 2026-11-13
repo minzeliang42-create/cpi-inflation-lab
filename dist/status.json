@@ -1,0 +1,14 @@
+{
+  "state": "degraded",
+  "last_attempt": "2026-11-13T03:29:43+00:00",
+  "last_success": "2026-11-13T03:29:56+00:00",
+  "changed_observations": 0,
+  "message": "BLS价格及API月度权重检查成功；部分官网网页受限，详见更新日志。",
+  "warnings": [
+    "Table 02: 403 Client Error: Forbidden for url: https://www.bls.gov/news.release/cpi.t02.htm",
+    "Table 01: 403 Client Error: Forbidden for url: https://www.bls.gov/news.release/cpi.t01.htm",
+    "新闻稿权重表暂不可达；采用已核验的API前一月口径，保留该项检查告警",
+    "年度权重检查：403 Client Error: Forbidden for url: https://www.bls.gov/cpi/tables/relative-importance/",
+    "发布日期检查：403 Client Error: Forbidden for url: https://www.bls.gov/schedule/news_release/cpi.htm"
+  ]
+}

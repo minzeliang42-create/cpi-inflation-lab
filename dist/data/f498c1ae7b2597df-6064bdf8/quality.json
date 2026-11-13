@@ -1,0 +1,247 @@
+{
+  "checks": {
+    "fixed_categories": 68,
+    "normalized_weight_max_error": 8.526512829121202e-14,
+    "quantile_order": true,
+    "count_partition": true,
+    "t_window_months": 60
+  },
+  "focus_months": {
+    "measures": [
+      {
+        "month": "2024-12",
+        "weight_status": "official",
+        "uses_estimated_price": false,
+        "p10": -1.353151347501175,
+        "p25": 0.626160052461527,
+        "p50": 3.568266579737325,
+        "p75": 4.781913118073654,
+        "p90": 4.799623953473459,
+        "valid_categories": 68,
+        "headline": 2.888057219980067,
+        "core": 3.238144703389168,
+        "calculation_status": "complete",
+        "data_status": "official"
+      },
+      {
+        "month": "2025-10",
+        "weight_status": "estimated",
+        "uses_estimated_price": true,
+        "p10": -0.478692548449762,
+        "p25": 1.484329816083828,
+        "p50": 3.114742860333434,
+        "p75": 3.433505920863094,
+        "p90": 4.629361121886625,
+        "valid_categories": 68,
+        "headline": null,
+        "core": null,
+        "calculation_status": "complete",
+        "data_status": "estimated"
+      },
+      {
+        "month": "2026-09",
+        "weight_status": "official",
+        "uses_estimated_price": false,
+        "p10": -0.653803081505851,
+        "p25": 2.12741103448107,
+        "p50": 3.249966472174305,
+        "p75": 3.465457342389967,
+        "p90": 5.281948253987166,
+        "valid_categories": 68,
+        "headline": 3.737684729064039,
+        "core": 2.564358351168661,
+        "calculation_status": "complete",
+        "data_status": "official"
+      }
+    ],
+    "acceleration": [
+      {
+        "month": "2024-12",
+        "weight_status": "official",
+        "uses_estimated_price": false,
+        "p10": -2.775475262230703,
+        "p25": -1.85237883664618,
+        "p50": -1.549173141674614,
+        "p75": -0.910763245575562,
+        "p90": 1.890006547270258,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "official"
+      },
+      {
+        "month": "2025-10",
+        "weight_status": "estimated",
+        "uses_estimated_price": true,
+        "p10": -1.912364470123282,
+        "p25": -1.793472223660467,
+        "p50": -0.774478842290964,
+        "p75": 1.288217159286142,
+        "p90": 3.344765943274281,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "estimated"
+      },
+      {
+        "month": "2026-09",
+        "weight_status": "official",
+        "uses_estimated_price": false,
+        "p10": -2.139518800227384,
+        "p25": -1.150418100132218,
+        "p50": -0.524299522094476,
+        "p75": 0.224087675087888,
+        "p90": 4.499091951794472,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "official"
+      }
+    ],
+    "declines": [
+      {
+        "month": "2024-12",
+        "weight_status": "official",
+        "uses_estimated_price": false,
+        "count": 21,
+        "items_pct": 30.88235294117647,
+        "weight_pct": 19.105621203085033,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "official"
+      },
+      {
+        "month": "2025-10",
+        "weight_status": "estimated",
+        "uses_estimated_price": true,
+        "count": 15,
+        "items_pct": 22.058823529411764,
+        "weight_pct": 12.615724858657746,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "estimated"
+      },
+      {
+        "month": "2026-09",
+        "weight_status": "official",
+        "uses_estimated_price": false,
+        "count": 14,
+        "items_pct": 20.588235294117645,
+        "weight_pct": 9.390965449001431,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "official"
+      }
+    ],
+    "growth": [
+      {
+        "month": "2024-12",
+        "weight_status": "official",
+        "uses_estimated_price": false,
+        "count": 47,
+        "items_pct": 69.11764705882352,
+        "weight_pct": 80.8943787969149,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "official"
+      },
+      {
+        "month": "2025-10",
+        "weight_status": "estimated",
+        "uses_estimated_price": true,
+        "count": 53,
+        "items_pct": 77.94117647058823,
+        "weight_pct": 87.38427514134221,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "estimated"
+      },
+      {
+        "month": "2026-09",
+        "weight_status": "official",
+        "uses_estimated_price": false,
+        "count": 54,
+        "items_pct": 79.41176470588235,
+        "weight_pct": 90.60903455099853,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "official"
+      }
+    ],
+    "t_declines": [
+      {
+        "month": "2024-12",
+        "weight_status": "official",
+        "uses_estimated_price": false,
+        "count": 1,
+        "items_pct": 1.470588235294118,
+        "weight_pct": 0.075811945941028,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "official"
+      },
+      {
+        "month": "2025-10",
+        "weight_status": "estimated",
+        "uses_estimated_price": true,
+        "count": 0,
+        "items_pct": 0.0,
+        "weight_pct": 0.0,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "estimated"
+      },
+      {
+        "month": "2026-09",
+        "weight_status": "official",
+        "uses_estimated_price": true,
+        "count": 1,
+        "items_pct": 1.470588235294118,
+        "weight_pct": 1.261081157488742,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "estimated"
+      }
+    ],
+    "t_growth": [
+      {
+        "month": "2024-12",
+        "weight_status": "official",
+        "uses_estimated_price": false,
+        "count": 1,
+        "items_pct": 1.470588235294118,
+        "weight_pct": 0.05458460107754,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "official"
+      },
+      {
+        "month": "2025-10",
+        "weight_status": "estimated",
+        "uses_estimated_price": true,
+        "count": 1,
+        "items_pct": 1.470588235294118,
+        "weight_pct": 0.431857481959146,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "estimated"
+      },
+      {
+        "month": "2026-09",
+        "weight_status": "official",
+        "uses_estimated_price": true,
+        "count": 3,
+        "items_pct": 4.411764705882353,
+        "weight_pct": 1.682114658427737,
+        "valid_categories": 68,
+        "calculation_status": "complete",
+        "data_status": "estimated"
+      }
+    ]
+  },
+  "incomplete_months": {
+    "measures": [],
+    "acceleration": [],
+    "declines": [],
+    "growth": [],
+    "t_declines": [],
+    "t_growth": []
+  }
+}

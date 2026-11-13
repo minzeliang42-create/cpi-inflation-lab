@@ -1,0 +1,410 @@
+[
+  {
+    "code": "SEFA",
+    "name": "Cereals and cereal products",
+    "series_id": "CUUR0000SEFA",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFB",
+    "name": "Bakery products",
+    "series_id": "CUUR0000SEFB",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFC",
+    "name": "Beef and veal",
+    "series_id": "CUUR0000SEFC",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFD",
+    "name": "Pork",
+    "series_id": "CUUR0000SEFD",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFE",
+    "name": "Other meats",
+    "series_id": "CUUR0000SEFE",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFF",
+    "name": "Poultry",
+    "series_id": "CUUR0000SEFF",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFG",
+    "name": "Fish and seafood",
+    "series_id": "CUUR0000SEFG",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFH",
+    "name": "Eggs",
+    "series_id": "CUUR0000SEFH",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFJ",
+    "name": "Dairy and related products",
+    "series_id": "CUUR0000SEFJ",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFK",
+    "name": "Fresh fruits",
+    "series_id": "CUUR0000SEFK",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFL",
+    "name": "Fresh vegetables",
+    "series_id": "CUUR0000SEFL",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFM",
+    "name": "Processed fruits and vegetables",
+    "series_id": "CUUR0000SEFM",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFN",
+    "name": "Juices and nonalcoholic drinks",
+    "series_id": "CUUR0000SEFN",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFP",
+    "name": "Beverage materials including coffee and tea",
+    "series_id": "CUUR0000SEFP",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFR",
+    "name": "Sugar and sweets",
+    "series_id": "CUUR0000SEFR",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFS",
+    "name": "Fats and oils",
+    "series_id": "CUUR0000SEFS",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFT",
+    "name": "Other foods",
+    "series_id": "CUUR0000SEFT",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFV",
+    "name": "Food away from home",
+    "series_id": "CUUR0000SEFV",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFW",
+    "name": "Alcoholic beverages at home",
+    "series_id": "CUUR0000SEFW",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEFX",
+    "name": "Alcoholic beverages away from home",
+    "series_id": "CUUR0000SEFX",
+    "major_group": "Food and beverages"
+  },
+  {
+    "code": "SEHA",
+    "name": "Rent of primary residence",
+    "series_id": "CUUR0000SEHA",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEHB",
+    "name": "Lodging away from home",
+    "series_id": "CUUR0000SEHB",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEHC",
+    "name": "Owners' equivalent rent of residences",
+    "series_id": "CUUR0000SEHC",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEHD",
+    "name": "Tenants' and household insurance",
+    "series_id": "CUUR0000SEHD",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEHE",
+    "name": "Fuel oil and other fuels",
+    "series_id": "CUUR0000SEHE",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEHF",
+    "name": "Energy services",
+    "series_id": "CUUR0000SEHF",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEHG",
+    "name": "Water and sewer and trash collection services",
+    "series_id": "CUUR0000SEHG",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEHH",
+    "name": "Window and floor coverings and other linens",
+    "series_id": "CUUR0000SEHH",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEHJ",
+    "name": "Furniture and bedding",
+    "series_id": "CUUR0000SEHJ",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEHK",
+    "name": "Appliances",
+    "series_id": "CUUR0000SEHK",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEHL",
+    "name": "Other household equipment and furnishings",
+    "series_id": "CUUR0000SEHL",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEHM",
+    "name": "Tools, hardware, outdoor equipment and supplies",
+    "series_id": "CUUR0000SEHM",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEHN",
+    "name": "Housekeeping supplies",
+    "series_id": "CUUR0000SEHN",
+    "major_group": "Housing"
+  },
+  {
+    "code": "SEAA",
+    "name": "Men's apparel",
+    "series_id": "CUUR0000SEAA",
+    "major_group": "Apparel"
+  },
+  {
+    "code": "SEAB",
+    "name": "Boys' apparel",
+    "series_id": "CUUR0000SEAB",
+    "major_group": "Apparel"
+  },
+  {
+    "code": "SEAC",
+    "name": "Women's apparel",
+    "series_id": "CUUR0000SEAC",
+    "major_group": "Apparel"
+  },
+  {
+    "code": "SEAD",
+    "name": "Girls' apparel",
+    "series_id": "CUUR0000SEAD",
+    "major_group": "Apparel"
+  },
+  {
+    "code": "SEAE",
+    "name": "Footwear",
+    "series_id": "CUUR0000SEAE",
+    "major_group": "Apparel"
+  },
+  {
+    "code": "SEAF",
+    "name": "Infants' and toddlers' apparel",
+    "series_id": "CUUR0000SEAF",
+    "major_group": "Apparel"
+  },
+  {
+    "code": "SEAG",
+    "name": "Jewelry and watches",
+    "series_id": "CUUR0000SEAG",
+    "major_group": "Apparel"
+  },
+  {
+    "code": "SETA",
+    "name": "New and used motor vehicles",
+    "series_id": "CUUR0000SETA",
+    "major_group": "Transportation"
+  },
+  {
+    "code": "SETB",
+    "name": "Motor fuel",
+    "series_id": "CUUR0000SETB",
+    "major_group": "Transportation"
+  },
+  {
+    "code": "SETC",
+    "name": "Motor vehicle parts and equipment",
+    "series_id": "CUUR0000SETC",
+    "major_group": "Transportation"
+  },
+  {
+    "code": "SETD",
+    "name": "Motor vehicle maintenance and repair",
+    "series_id": "CUUR0000SETD",
+    "major_group": "Transportation"
+  },
+  {
+    "code": "SETE",
+    "name": "Motor vehicle insurance",
+    "series_id": "CUUR0000SETE",
+    "major_group": "Transportation"
+  },
+  {
+    "code": "SETF",
+    "name": "Motor vehicle fees",
+    "series_id": "CUUR0000SETF",
+    "major_group": "Transportation"
+  },
+  {
+    "code": "SETG",
+    "name": "Public transportation",
+    "series_id": "CUUR0000SETG",
+    "major_group": "Transportation"
+  },
+  {
+    "code": "SEMF",
+    "name": "Medicinal drugs",
+    "series_id": "CUUR0000SEMF",
+    "major_group": "Medical care"
+  },
+  {
+    "code": "SEMG",
+    "name": "Medical equipment and supplies",
+    "series_id": "CUUR0000SEMG",
+    "major_group": "Medical care"
+  },
+  {
+    "code": "SEMC",
+    "name": "Professional services",
+    "series_id": "CUUR0000SEMC",
+    "major_group": "Medical care"
+  },
+  {
+    "code": "SEMD",
+    "name": "Hospital and related services",
+    "series_id": "CUUR0000SEMD",
+    "major_group": "Medical care"
+  },
+  {
+    "code": "SEME",
+    "name": "Health insurance",
+    "series_id": "CUUR0000SEME",
+    "major_group": "Medical care"
+  },
+  {
+    "code": "SERA",
+    "name": "Video and audio",
+    "series_id": "CUUR0000SERA",
+    "major_group": "Recreation"
+  },
+  {
+    "code": "SERB",
+    "name": "Pets, pet products and services",
+    "series_id": "CUUR0000SERB",
+    "major_group": "Recreation"
+  },
+  {
+    "code": "SERC",
+    "name": "Sporting goods",
+    "series_id": "CUUR0000SERC",
+    "major_group": "Recreation"
+  },
+  {
+    "code": "SERD",
+    "name": "Photography",
+    "series_id": "CUUR0000SERD",
+    "major_group": "Recreation"
+  },
+  {
+    "code": "SERE",
+    "name": "Other recreational goods",
+    "series_id": "CUUR0000SERE",
+    "major_group": "Recreation"
+  },
+  {
+    "code": "SERF",
+    "name": "Other recreation services",
+    "series_id": "CUUR0000SERF",
+    "major_group": "Recreation"
+  },
+  {
+    "code": "SERG",
+    "name": "Recreational reading materials",
+    "series_id": "CUUR0000SERG",
+    "major_group": "Recreation"
+  },
+  {
+    "code": "SEEB",
+    "name": "Tuition, other school fees, and childcare",
+    "series_id": "CUUR0000SEEB",
+    "major_group": "Education and communication"
+  },
+  {
+    "code": "SEEC",
+    "name": "Postage and delivery services",
+    "series_id": "CUUR0000SEEC",
+    "major_group": "Education and communication"
+  },
+  {
+    "code": "SEED",
+    "name": "Telephone services",
+    "series_id": "CUUR0000SEED",
+    "major_group": "Education and communication"
+  },
+  {
+    "code": "SEEE",
+    "name": "Information technology, hardware and services",
+    "series_id": "CUUR0000SEEE",
+    "major_group": "Education and communication"
+  },
+  {
+    "code": "SEGA",
+    "name": "Tobacco and smoking products",
+    "series_id": "CUUR0000SEGA",
+    "major_group": "Other goods and services"
+  },
+  {
+    "code": "SEGB",
+    "name": "Personal care products",
+    "series_id": "CUUR0000SEGB",
+    "major_group": "Other goods and services"
+  },
+  {
+    "code": "SEGC",
+    "name": "Personal care services",
+    "series_id": "CUUR0000SEGC",
+    "major_group": "Other goods and services"
+  },
+  {
+    "code": "SEGD",
+    "name": "Miscellaneous personal services",
+    "series_id": "CUUR0000SEGD",
+    "major_group": "Other goods and services"
+  },
+  {
+    "code": "SEGE",
+    "name": "Miscellaneous personal goods",
+    "series_id": "CUUR0000SEGE",
+    "major_group": "Other goods and services"
+  }
+]
