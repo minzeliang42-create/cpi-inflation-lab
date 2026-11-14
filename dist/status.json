@@ -1,7 +1,7 @@
 {
   "state": "degraded",
-  "last_attempt": "2026-11-13T03:29:43+00:00",
-  "last_success": "2026-11-13T03:29:56+00:00",
+  "last_attempt": "2026-11-14T02:34:42+00:00",
+  "last_success": "2026-11-14T02:34:57+00:00",
   "changed_observations": 0,
   "message": "BLS价格及API月度权重检查成功；部分官网网页受限，详见更新日志。",
   "warnings": [
