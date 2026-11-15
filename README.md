@@ -9,7 +9,7 @@
 - 2026-10价格为实际值，权重由2026-09权重与当月价格更新，标为provisional。
 - 原Excel仅以只读方式导入。项目保留其SHA-256及清洗后输入；原文件没有被改动。没有把原工作簿放进待发布目录。
 - 本地已实际连接BLS，70条价格序列及68类API权重均成功检查。BLS官网HTML网页在本机返回403，状态为degraded，现有日历保留官方网页核验缓存。详见`VALIDATION.md`。
-- 本项目尚未部署。工作流默认关闭发布，等网站访问范围确认后启用。
+- 网站已公开部署：https://minzeliang42-create.github.io/cpi-inflation-lab/ 。GitHub Actions定时更新及Pages重新发布已启用，并已通过手动运行验证。
 
 ## 本地运行
 
@@ -78,7 +78,7 @@ python -m cpi.build
 2. 在仓库Settings → Actions → General允许工作流读写内容。Actions需要能提交数据变更；若main受分支保护，配置专用可写分支或机器人权限。
 3. 在Settings → Pages选择GitHub Actions作为构建发布来源，确认网站访问范围。
 4. 可选：在Settings → Secrets and variables → Actions中添加`BLS_API_KEY` Secret。API密钥只从环境读取。当前已实测无密钥批量API可以返回所需数据；将来限制改变时在Secret中配置即可。
-5. 确认网站访问设置后，建立Repository variable：`CPI_PAGES_ENABLED=true`。未设置时，工作流计算和归档数据，但不部署网站。
+5. 本仓库已获得公开发布授权，工作流会在数据检查后直接部署；无需设置CPI_PAGES_ENABLED变量。
 6. 在Actions中手动运行“Update CPI research and deploy”。检查更新日志、测试和Pages deployment成功后，用工作流返回的真实网址验证。
 
 工作流每日UTC 22:25（北京时间次日06:25）检查一次。工作日UTC 12:40–18:40逐小时触发一次轻量本地日历判断，仅在官方发布日期的发布后5小时内发出额外BLS请求。冬夏令时由America/New_York转换；非发布日期不额外抓取。GitHub定时任务可能排队延迟，不能当作秒级发布承诺。公开仓库若长期无活动，需留意GitHub对定时工作流的停用政策。
