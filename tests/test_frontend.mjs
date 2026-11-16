@@ -12,3 +12,15 @@ assert.equal(range('t_growth',[{month:'2026-01',items_pct:0,weight_pct:0}])[1],1
 assert.equal(range('t_declines',[{month:'2026-01',items_pct:null,weight_pct:null}])[1],1);
 assert.ok(range('t_declines',rows,'2026-01-01','2026-01-31')[1]>4);
 console.log('Frontend range checks passed: full history, bounded interval, extremes, zero, missing and ordinary diffusion.');
+const forecast=fs.readFileSync(new URL('../web/forecast.js',import.meta.url),'utf8');
+const axis=vm.runInNewContext('('+forecast.slice(forecast.indexOf('function trendAxis('),forecast.indexOf('function syncTrendAxis('))+')');
+const line=(y,visible)=>({x:['2026-01','2027-01'],y,visible});
+assert.equal(axis('t_declines',[line([2,4.41])]).range[1],6);
+assert.equal(axis('t_growth',[line([4,5.88])]).range[1],8);
+assert.ok(axis('t_declines',[line([2,43.52])]).range[1]>43.52);
+assert.equal(axis('t_declines',[line([2,4.41]),line([43,50],'legendonly')]).range[1],6);
+assert.equal(axis('t_growth',[line([43,5])],'2027-01','2027-12').range[1],8);
+assert.ok(axis('t_growth',[line([4,10])]).range[1]>10);
+assert.equal(axis('t_declines',[line([40,50],false)]).range[1],6);
+assert.equal(range('t_declines',[{month:'2026-01',items_pct:1,weight_pct:2,weight_pct_upper95:90}])[1],2.3);
+console.log('Trend mode checks passed: 6/8 defaults, visible-only intervals, hidden legends, dates and expanding extremes.');

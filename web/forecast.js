@@ -5,18 +5,35 @@ const FC_LABEL={base:'Base · 基准',low:'Low · 较低通胀路径',high:'High
 Object.assign(LABEL,{model:'模型',asof:'预测基准月',forecast_horizon:'预测步长（月）',
  window_forecast_observations:'窗口含预测同比月数',window_estimated_observations:'窗口含估算同比月数',price_index_lower80:'价格80%下界',price_index_upper80:'价格80%上界',yoy_lower80:'YoY80%下界',yoy_upper80:'YoY80%上界',uncertainty_type:'不确定性口径'});
 
-function forecastTraces(key,rows,historical,metric){
+// Pure display helper: only rendered, visible traces in the selected date range.
+function trendAxis(key,series,start,end){
+ const floor=key==='t_declines'?6:8,lo=start?String(start).slice(0,7):'',hi=end?String(end).slice(0,7):'9999-12';
+ let max=0;for(const trace of series){if(trace.visible===false||trace.visible==='legendonly')continue;
+  for(let i=0;i<(trace.y?.length||0);i++){const month=String(trace.x[i]).slice(0,7),v=trace.y[i];if(month>=lo&&month<=hi&&typeof v==='number'&&Number.isFinite(v))max=Math.max(max,v);}}
+ const upper=max<=floor?floor:Math.ceil(max*1.12);
+ const dtick=upper<=8?1:[2,5,10,20,50,100].find(n=>n>=upper/8)||100;
+ return {range:[0,upper],dtick};
+}
+function syncTrendAxis(key,el){
+ const range=el.layout.xaxis.autorange?[]:el.layout.xaxis.range||[];
+ const axis=trendAxis(key,el.data,...range);
+ if(JSON.stringify(el.layout.yaxis.range)!==JSON.stringify(axis.range)||el.layout.yaxis.dtick!==axis.dtick)
+  return Plotly.relayout(el,{'yaxis.range':axis.range,'yaxis.dtick':axis.dtick,'yaxis.autorange':false});
+}
+// End pure display helper.
+function forecastTraces(key,rows,historical,metric,level='both'){
  const first=historical.at(-1),forecastLine=(field,color,width=2)=>({
   x:[first.month,...rows.map(r=>r.month)].map(m=>m+'-01'),y:[first[field],...rows.map(r=>r[field])],
   customdata:['历史边界',...rows.map(r=>`${r.scenario} · Forecast<br>As of ${r.asof} · ${r.model}<br>Model ${FORECAST.meta.model_version} · Generated ${localTime(FORECAST.meta.generated_at)}<br>${stateNote(r)}${r.window_forecast_observations!=null?`<br>60月窗口：预测同比 ${r.window_forecast_observations} 月；估算同比最多 ${r.window_estimated_observations} 月`:''}${r[field+'_lower80']!=null?`<br>80%: ${fmt(r[field+'_lower80'],3)}–${fmt(r[field+'_upper80'],3)}<br>95%: ${fmt(r[field+'_lower95'],3)}–${fmt(r[field+'_upper95'],3)}`:''}`)],
-  name:(LABEL[field]||field)+' · Forecast',type:'scatter',mode:'lines',connectgaps:false,
+  uid:key+'-forecast-'+field,name:(LABEL[field]||field)+' · Forecast',type:'scatter',mode:'lines',connectgaps:false,
   line:{color,width,dash:'dash'},hovertemplate:`%{x|%Y-%m}<br>${LABEL[field]||field}: %{y:.3f} ${CONFIG[key].unit}<br>%{customdata}<extra></extra>`});
  const result=[];
  if(forecastScenario==='base'&&metric!=='none'){
   for(const [low,high,opacity,name] of [['lower95','upper95',.10,'95% empirical interval'],['lower80','upper80',.20,'80% empirical interval']]){
-   const x=rows.map(r=>r.month+'-01');
-   result.push({x,y:rows.map(r=>r[metric+'_'+low]),mode:'lines',line:{width:0},showlegend:false,hoverinfo:'skip',connectgaps:false});
-   result.push({x,y:rows.map(r=>r[metric+'_'+high]),mode:'lines',line:{width:0},fill:'tonexty',
+   if(level!=='both'&&!name.startsWith(level))continue;
+   const group=key+'-'+metric+'-'+low;const x=rows.map(r=>r.month+'-01');
+   result.push({uid:group+'-lower',legendgroup:group,x,y:rows.map(r=>r[metric+'_'+low]),mode:'lines',line:{width:0},showlegend:false,hoverinfo:'skip',connectgaps:false});
+   result.push({uid:group+'-upper',legendgroup:group,x,y:rows.map(r=>r[metric+'_'+high]),mode:'lines',line:{width:0},fill:'tonexty',
     fillcolor:`rgba(112,83,147,${opacity})`,name,hoverinfo:'skip',connectgaps:false});
   }
  }
@@ -37,16 +54,25 @@ async function renderForecast(){
  DATA.components=[...HISTORY.components,...scenario.components];
  for(const [key,c] of Object.entries(CONFIG)){
   const rows=scenario.groups[key],hist=HISTORY.groups[key],el=$(`#chart-${key}`),metric=$(`#interval-${key}`).value;
-  const rangeRows=rows.map(r=>{const copy={...r};if(forecastScenario!=='base'||metric==='none'){
-   delete copy.items_pct_upper95;delete copy.weight_pct_upper95;
-  }return copy;});
-  el._displayRows=[...hist,...rangeRows];
+  const isTrend=key.startsWith('t_'),level=$(`#interval-level-${key}`)?.value||'both';
+  el._displayRows=[...hist,...rows];
+  const previous=new Map(el.data.map(t=>[t.uid,t.visible]));
+  const display=[...traces(key,hist).map((t,i)=>({...t,uid:key+'-history-'+i})),...forecastTraces(key,rows,hist,metric,level)];
+  if(isTrend){for(const t of display){if(t.line?.width>0){const field=t.name.includes('类别')||t.name.includes('items')?'items_pct':'weight_pct';
+    t.legendgroup=key+':share:'+field;t.mode='lines+markers';t.marker={size:t.line.dash?4:3,symbol:t.line.dash?'diamond':'circle',color:t.line.color};
+    if(t.line.dash)t.showlegend=false;
+   }}
+   for(const t of display)if(previous.has(t.uid))t.visible=previous.get(t.uid);
+   const levelControl=$(`#interval-level-${key}`);levelControl.disabled=metric==='none'||forecastScenario!=='base';
+  }
   const layout={...el.layout,margin:{l:48,r:16,t:24,b:105},legend:{...el.layout.legend,y:-.24,font:{size:9}},shapes:[...statusShapes(hist),
    {type:'rect',xref:'x',yref:'paper',x0:FORECAST.meta.forecast_start+'-01',x1:FORECAST.meta.forecast_end+'-28',y0:0,y1:1,fillcolor:'rgba(112,83,147,.035)',line:{width:0},layer:'below'},
    {type:'line',xref:'x',yref:'paper',x0:FORECAST.meta.forecast_start+'-01',x1:FORECAST.meta.forecast_start+'-01',y0:0,y1:1,line:{color:'#705393',width:1,dash:'dot'}}],
    annotations:[{xref:'x',yref:'paper',x:FORECAST.meta.forecast_start+'-01',y:1,text:'Forecast →',showarrow:false,xanchor:'left',font:{size:10,color:'#705393'}}]};
   if(key.includes('declines')||key.includes('growth'))layout.yaxis={...layout.yaxis,range:diffusionRange(key,el._displayRows,...(layout.xaxis.autorange?[]:layout.xaxis.range)),autorange:false};
-  await Plotly.react(el,[...traces(key,hist),...forecastTraces(key,rows,hist,metric)],layout,{responsive:true,displayModeBar:false});
+  if(isTrend){layout.margin.b=75;layout.legend={...layout.legend,y:-.18,groupclick:'togglegroup'};layout.yaxis={...layout.yaxis,...trendAxis(key,display,...(layout.xaxis.autorange?[]:layout.xaxis.range)),autorange:false};}
+  await Plotly.react(el,display,layout,{responsive:true,displayModeBar:false});
+  if(isTrend){el._syncTrendAxis=()=>syncTrendAxis(key,el);if(!el._trendEvents){el.on('plotly_restyle',el._syncTrendAxis);el._trendEvents=true;}await el._syncTrendAxis();}
   const intervalCols=metric==='none'?[]:[metric+'_lower80',metric+'_upper80',metric+'_lower95',metric+'_upper95'];
   intervalCols.forEach(k=>LABEL[k]=k.replaceAll('_',' '));
   table($(`#table-${key}`),[...hist,...rows].reverse(),[...c.cols,'data_status','weight_status','uses_estimated_price',...intervalCols,'model','asof']);
@@ -93,6 +119,20 @@ async function initForecast(){
    const fields=key==='measures'||key==='acceleration'?['p50','headline','core','p10','p25','p75','p90']:['weight_pct','items_pct'];
    controls.innerHTML=`<div id="forecast-card-${key}" class="forecast-cards"></div><label>预测经验区间 <select id="interval-${key}">${fields.map(f=>`<option value="${f}">${LABEL[f]}</option>`).join('')}<option value="none">不显示</option></select></label><a href="${FORECAST_BASE+key}_forecast.csv" download>Forecast CSV ↓</a>`;
    $(`#${key} .chart`).before(controls);controls.querySelector('select').addEventListener('change',renderForecast);
+   if(key.startsWith('t_')){
+    $(`#${key}`).classList.add('trend-chart');const select=controls.querySelector('select');
+    select.querySelector('[value="none"]').textContent='趋势研究 · 不显示区间';select.prepend(select.querySelector('[value="none"]'));select.value='none';
+    const label=document.createElement('label');label.innerHTML=`区间范围 <select id="interval-level-${key}"><option value="both">80% + 95%</option><option value="80">仅80%</option><option value="95">仅95%</option></select>`;
+    controls.append(label);label.querySelector('select').addEventListener('change',renderForecast);
+    const note=document.createElement('small');note.textContent='默认趋势模式；经验区间仅适用于Base。点击图例可同时隐藏对应历史及预测线。';controls.append(note);
+    const button=document.createElement('button');button.textContent='12M history + Forecast';button.dataset.recentForecast='true';
+    $(`#${key} .range-buttons`).prepend(button);button.addEventListener('click',()=>{
+     $(`#${key} .range-buttons`).querySelectorAll('button').forEach(b=>b.classList.toggle('active',b===button));
+     const start=new Date(FORECAST.meta.asof+'-01T00:00:00Z');start.setUTCMonth(start.getUTCMonth()-11);
+     Plotly.relayout(`chart-${key}`,{'xaxis.range':[start.toISOString().slice(0,10),FORECAST.meta.forecast_end+'-28'],'xaxis.autorange':false}).then(()=>$(`#chart-${key}`)._syncTrendAxis());
+    });
+   }
+
   }
   const months=[...new Set([...DATA.components.map(r=>r.month),...FORECAST.scenarios.base.components.map(r=>r.month)])].sort().reverse();
   const selected=$('#month-select').value;$('#month-select').innerHTML=months.map(m=>`<option>${m}</option>`).join('');$('#month-select').value=selected;
