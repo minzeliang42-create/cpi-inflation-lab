@@ -158,8 +158,9 @@ def calculate(obs, components, annual_anchors=None):
     yoy_est = est_price | est_price.shift(12, fill_value=False)
     accel_est = yoy_est | yoy_est.shift(12, fill_value=False)
     z_est = yoy_est.rolling(60, min_periods=1).max().astype(bool)
-    official_px = pxobs.pivot(index='month', columns='code', values='value').reindex(index=months, columns=['SA0', 'SA0L1E'])
+    official_px = pxobs[pxobs.status == 'official'].pivot(index='month', columns='code', values='value').reindex(index=months, columns=['SA0', 'SA0L1E'])
     official_yoy = (official_px / official_px.shift(12).where(official_px.shift(12) > 0) - 1) * 100
+    official_accel = official_yoy - official_yoy.shift(12)
     details, groups = [], {key: [] for key in GROUPS}
     for k, month in enumerate(months):
         w = norm.loc[month]
@@ -187,8 +188,8 @@ def calculate(obs, components, annual_anchors=None):
                 vals = (yoy if key == 'measures' else accel).loc[month]
                 row.update(zip(['p10', 'p25', 'p50', 'p75', 'p90'], weighted_quantile(vals, w)))
                 row['valid_categories'] = int(vals.notna().sum())
-                if key == 'measures':
-                    row.update(headline=official_yoy.at[month, 'SA0'], core=official_yoy.at[month, 'SA0L1E'])
+                official = official_yoy if key == 'measures' else official_accel
+                row.update(headline=official.at[month, 'SA0'], core=official.at[month, 'SA0L1E'])
                 complete = bool(ready_w and vals.notna().all())
             else:
                 v = z.loc[month] if key.startswith('t_') else yoy.loc[month]

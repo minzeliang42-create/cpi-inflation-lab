@@ -49,11 +49,14 @@ class ResearchTests(unittest.TestCase):
         This does not use pandas rolling, np.interp, or component calculated columns.
         """
         reconciliation={}
-        for month in ['2024-12','2025-10','2026-09']:
+        for month in ['2024-12','2025-10','2026-09','2026-10']:
             def lag(n): return str(pd.Period(month,'M')-n)
             def price(m,c): return self.lookup[(m,c,'price')]
             codes=[c['code'] for c in self.components]
-            raw=[self.lookup[(month,c,'weight')] for c in codes]
+            if all((month,c,'weight') in self.lookup for c in codes):
+                raw=[self.lookup[(month,c,'weight')] for c in codes]
+            else:
+                raw=[self.lookup[(lag(1),c,'weight')]*price(month,c)/price(lag(1),c) for c in codes]
             weights=[w/math.fsum(raw)*100 for w in raw]
             def inflation(m,c): return (price(m,c)/price(str(pd.Period(m,'M')-12),c)-1)*100
             ys=[inflation(month,c) for c in codes]
@@ -82,8 +85,15 @@ class ResearchTests(unittest.TestCase):
                 for col,value in expected.items(): self.assertAlmostEqual(value,actual[col],places=10)
                 result[key]=expected
             for code,col in [('SA0','headline'),('SA0L1E','core')]:
-                if (month,code,'price') in self.lookup and (lag(12),code,'price') in self.lookup:
-                    self.assertAlmostEqual(inflation(month,code),self.groups['measures'].set_index('month').at[month,col],places=10)
+                for key,lags in [('measures',[0,12]),('acceleration',[0,12,24])]:
+                    actual=self.groups[key].set_index('month').at[month,col]
+                    if all((lag(n),code,'price') in self.lookup for n in lags):
+                        expected=inflation(month,code)-(inflation(lag(12),code) if key=='acceleration' else 0)
+                        self.assertAlmostEqual(expected,actual,places=10)
+                        result[key][col]=expected
+                    else:
+                        self.assertTrue(pd.isna(actual))
+                        result[key][col]=None
             reconciliation[month]=result
         out=ROOT/'output/validation';out.mkdir(parents=True,exist_ok=True)
         (out/'independent_reconciliation.json').write_text(json.dumps(reconciliation,indent=2),encoding='utf-8')

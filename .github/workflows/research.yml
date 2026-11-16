@@ -48,6 +48,7 @@ jobs:
         run: |
           python -m cpi.build
           python -m unittest discover -s tests -v
+          node tests/test_frontend.mjs
       - name: Check official BLS data
         id: update
         continue-on-error: true

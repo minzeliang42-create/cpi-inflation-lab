@@ -28,6 +28,16 @@ RI='https://www.bls.gov/cpi/tables/relative-importance/'
 MONTHS={m.lower():i for i,m in enumerate(['January','February','March','April','May','June','July','August','September','October','November','December'],1)}
 
 
+class WeightReferenceMismatch(ValueError):
+    pass
+
+
+def verify_api_weights(rows,ref,weights):
+    api_weights={r['code']:r['value'] for r in rows if r['kind']=='weight' and r['month']==ref}
+    if any(abs(api_weights[c]-v)>1e-6 for c,v in weights.items() if c in api_weights):
+        raise WeightReferenceMismatch('API weight month or value disagrees with dated release header')
+
+
 def month_in_text(text):
     text=re.sub(r'\s+',' ',text)
     for name, num in MONTHS.items():
@@ -102,6 +112,10 @@ def parse_annual_table(html,components,vintage):
         # This official annual table has Item/Group, CPI-U, CPI-W in that order.
         headers=[c.get_text(' ',strip=True) for c in table.select('thead th')]
         if headers and not any('CPI-U' in h for h in headers): raise ValueError('Missing CPI-U header')
+        if headers:
+            u=next(i for i,h in enumerate(headers) if 'CPI-U' in h)
+            w=next((i for i,h in enumerate(headers) if 'CPI-W' in h),None)
+            if w is None or u>=w: raise ValueError('Unexpected annual CPI-U / CPI-W column order')
         weights={}
         for tr in table.select('tr'):
             cells=tr.find_all(['td','th'],recursive=False)
@@ -125,7 +139,11 @@ class Client:
         # At most one request per second; POST body (which may contain a secret) is never logged.
         time.sleep(max(0,1-(time.monotonic()-self.last_request)))
         self.last_request=time.monotonic()
-        response=self.session.post(url,json=payload,timeout=(15,90)) if payload else self.session.get(url,timeout=(15,90))
+        try:
+            response=self.session.post(url,json=payload,timeout=(15,90)) if payload else self.session.get(url,timeout=(15,90))
+        except requests.RequestException as exc:
+            self.events.append(dict(url=url,http_status=None,fetched_at=utcnow(),error=type(exc).__name__))
+            raise
         stamp=utcnow();sha=hashlib.sha256(response.content).hexdigest()
         suffix='.json' if 'json' in response.headers.get('content-type','') else '.txt'
         folder=self.root/'data/raw'/stamp[:10]
@@ -260,13 +278,12 @@ def run(root=ROOT, force=False):
             try:
                 response,event=client.fetch(f'https://www.bls.gov/news.release/cpi.t{number}.htm')
                 ref,weights=parse_weight_table(response.text,components)
-                api_weights={r['code']:r['value'] for r in new if r['kind']=='weight' and r['month']==ref}
-                if any(abs(api_weights[c]-v)>1e-6 for c,v in weights.items() if c in api_weights):
-                    raise ValueError('API weight month or value disagrees with dated release header')
+                verify_api_weights(new,ref,weights)
                 got_header=True
                 if len(weights)==68:
                     new.extend(observation(ref,c,'weight',v,event,'Explicit month from Relative Importance header') for c,v in weights.items())
                     break
+            except WeightReferenceMismatch: raise
             except (requests.RequestException,ValueError) as exc: warnings.append(f'Table {number}: '+str(exc)[:160])
         if not got_header: warnings.append('新闻稿权重表暂不可达；采用已核验的API前一月口径，保留该项检查告警')
         # Preserve annual old/new weight vintages separately. Never overwrite December's
@@ -300,8 +317,17 @@ def run(root=ROOT, force=False):
             write_json(root/'data/input/calendar.json',dict(source=SCHEDULE,fetched_at=event['fetched_at'],releases=releases))
         except (requests.RequestException,ValueError) as exc: warnings.append('发布日期检查：'+str(exc)[:160])
         merged,changes=merge_observations(old,new,components)
+        new_weights=pd.DataFrame([r for r in new if r['kind']=='weight'])
+        weight_months=[] if new_weights.empty else new_weights.groupby('month').code.nunique().loc[lambda v:v.eq(68)].index.tolist()
+        if not weight_months: warnings.append('本次未取得完整68类官方月度权重；保留既有权重，按规则标记暂定值')
+        weight_audit=dict(field='aspects[name=Relative Importance]',excluded_field='Relative Importance for previous year',
+                          reference_rule='observation month minus one calendar month',complete_months=weight_months,
+                          latest_reference_month=max(weight_months) if weight_months else None,header_verified=got_header)
+        write_json(root/'data/updates'/f'{stamp.replace(":","-")}-weight-audit.json',weight_audit)
         status=dict(state='degraded' if warnings else 'success',last_attempt=stamp,last_success=utcnow(),
-                    changed_observations=len(changes),message='BLS价格及API月度权重检查成功；'+('部分官网网页受限，详见更新日志。' if warnings else '全部来源检查完成。'),warnings=warnings)
+                    changed_observations=len(changes),message='BLS价格检查成功；'+('68类官方月度权重检查成功；' if weight_months else '本次官方月度权重不完整；')+('部分来源受限，详见更新日志。' if warnings else '全部来源检查完成。'),warnings=warnings,
+                    weight_audit=weight_audit,
+                    source_channels=[dict(url=e['url'],http_status=e['http_status'],fetched_at=e['fetched_at']) for e in client.events])
         # Validate and build all affected history before replacing the input ledger.
         payload=build(root,merged,status)
         tmp=root/'.staging/observations.csv'

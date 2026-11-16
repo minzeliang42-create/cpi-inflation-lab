@@ -96,7 +96,7 @@ def build(root=ROOT, observations=None, update_status=None):
         calendar = json.loads(calendar_path.read_text(encoding='utf-8')) if calendar_path.exists() else {}
         future = [r for r in calendar.get('releases',[]) if r['release_at'] > utcnow()]
         official_weights = obs[(obs.kind=='weight') & (obs.status=='official')].groupby('month').code.nunique()
-        meta = dict(version=version, generated_at=utcnow(), latest_price_month=obs[obs.kind=='price'].month.max(),
+        meta = dict(version=version, app_version='1.1', generated_at=utcnow(), latest_price_month=obs[(obs.kind=='price') & (obs.status=='official')].month.max(),
                     latest_official_weight_month=official_weights[official_weights.eq(68)].index.max(),
                     latest_calculation_months=latest, next_release=future[0] if future else None,
                     calendar_verified_at=calendar.get('fetched_at'), source=source, checks=checks,
@@ -104,7 +104,7 @@ def build(root=ROOT, observations=None, update_status=None):
                     status=update_status or {'state':'historical_build','last_success':None,'message':'已由源工作簿构建；等待官方更新检查'})
         payload = dict(meta=meta, groups={k:records(v) for k,v in groups.items()}, components=records(details))
         write_json(bundle/'research.json', payload)
-        focus = {k:records(v[v.month.isin(['2024-12','2025-10','2026-09'])]) for k,v in groups.items()}
+        focus = {k:records(v[v.month.isin(['2024-12','2025-10','2026-09','2026-10'])]) for k,v in groups.items()}
         write_json(bundle/'quality.json', {'checks':checks, 'focus_months':focus,
                    'incomplete_months':{k:v.loc[v.calculation_status!='complete','month'].tolist() for k,v in groups.items()}})
         write_json(bundle/'provenance.json', records(obs.drop(columns=['priority'], errors='ignore')))

@@ -2,6 +2,12 @@
 
 固定68类美国CPI研究网站。Python计算六组历史指标，Plotly展示交互图表，GitHub Actions检查BLS更新，GitHub Pages提供静态托管。预测区间已预留，数值留空。
 
+## V1.1（2026-11-16）
+
+补齐官方Headline/Core Acceleration；t-Diffusion按可见时间范围动态调整纵轴；补充估算/暂定状态提示及官方来源审计。
+
+[本轮验收及对账](VALIDATION_V1_1.md) · [完整重点月结果](VALIDATION_V1_1.json)
+
 ## 当前交付
 
 - 六组完整历史序列，均计算至2026-10。Measures、普通Diffusion从2019-01起，Acceleration从2020-01起，t-Diffusion从2023-12起。

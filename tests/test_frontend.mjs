@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const source=fs.readFileSync(new URL('../web/app.js',import.meta.url),'utf8');
+const helper=source.slice(source.indexOf('function diffusionRange('),source.indexOf('function statusShapes('));
+const range=vm.runInNewContext(`(${helper})`);
+const rows=[{month:'2020-01',items_pct:80,weight_pct:95},{month:'2025-01',items_pct:2,weight_pct:5},{month:'2026-01',items_pct:4,weight_pct:3}];
+const all=range('t_growth',rows),recent=range('t_growth',rows,'2025-01-01','2026-01-01');
+assert.equal(all[0],0);assert.ok(all[1]>95);assert.equal(recent[0],0);assert.ok(recent[1]>5&&recent[1]<all[1]);
+assert.equal(range('declines',rows)[1],100);assert.equal(range('growth',rows)[1],100);
+assert.equal(range('t_growth',[{month:'2026-01',items_pct:0,weight_pct:0}])[1],1);
+assert.equal(range('t_declines',[{month:'2026-01',items_pct:null,weight_pct:null}])[1],1);
+assert.ok(range('t_declines',rows,'2026-01-01','2026-01-31')[1]>4);
+console.log('Frontend range checks passed: full history, bounded interval, extremes, zero, missing and ordinary diffusion.');
