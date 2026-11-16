@@ -1,6 +1,23 @@
 # CPI Inflation Distribution & Dispersion
 
-固定68类美国CPI研究网站。Python计算六组历史指标，Plotly展示交互图表，GitHub Actions检查BLS更新，GitHub Pages提供静态托管。预测区间已预留，数值留空。
+固定68类美国CPI研究网站。Python计算六组历史指标，Plotly展示交互图表，GitHub Actions检查BLS更新，GitHub Pages提供静态托管。V2.0提供2026-11至2027-12逐月预测、联合经验区间、情景分析及不可覆盖的预测版本。
+
+## V2.0 预测研究
+
+在原有项目上增加分项模型预测。开发目标截止2024-12，最终测试目标为2025-01至2026-10；1、2、3、6、12、14个月扩展起点伪实时回测。事后插值按依赖信息月份屏蔽。每类比较11个基准及ETS、ARIMA、SARIMA、STL候选规格；以六组指标误差检验分项模型政策及组合。正式路径为分项选择模型，直接指标预测作为公开比较基准，部分指标上直接延续误差更低。
+
+2027权重是消费数量不变的Forecast情景，不是官方RI。联合14×70价格误差块保留类别及期限共同变化，经六组非线性计算得到80/95经验区间；网页展示最终测试覆盖率。14个月覆盖率下降、t样本短，不能视为保证覆盖率。
+
+```powershell
+python scripts/restore_forecast_research.py
+python -m cpi.forecast
+python -m unittest discover -s tests -v
+node tests/test_frontend.mjs
+```
+
+`python -m cpi.forecast --research`显式重新研究。常规云端发布使用冻结的模型选择，只在价格、权重、年度锚点或模型代码发生变化时生成新版本。`dist/current_forecast.json`指向不可覆盖的`dist/forecasts/<digest>/`。`data/forecast/vintages.json`保留版本索引；`dist/forecast_realizations.csv`在目标月份实际公布后记录误差。失败保留上一版指针，并更新独立的预测状态。无新输入不重新拟合。
+
+每版包含CPI_Forecast.xlsx（8张指定工作表）、CSV、JSON及Research_Report.md。`data/forecast/research/`提供逐起点真实/预测/误差、模型参数、诊断和校准路径，可复核研究。Seasonal Naive按上一年度对应月份的环比变化递推，与当前同比延续代数等价，未当成独立证据重复解释。
 
 ## V1.1（2026-11-16）
 

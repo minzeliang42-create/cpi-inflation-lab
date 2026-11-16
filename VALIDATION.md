@@ -1,5 +1,7 @@
 # 最新验收
 
+V2.0预测研究及本地测试记录见[VALIDATION_V2.md](VALIDATION_V2.md)。
+
 2026-11-16 V1.1已修订，详见[本轮验收](VALIDATION_V1_1.md)及[逐项对账](VALIDATION_V1_1.json)。以下保留V1首版记录。
 
 # 验收记录
