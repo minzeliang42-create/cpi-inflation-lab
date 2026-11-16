@@ -1,0 +1,16 @@
+{
+  "url": "https://minzeliang42-create.github.io/cpi-inflation-lab/",
+  "version": "7af1cd6a29142a838e88",
+  "forecast_asof": "2026-10",
+  "end": "2027-12",
+  "xlsx_bytes": 4953594,
+  "matched_values": 924,
+  "status": {
+    "state": "success",
+    "checked_at": "2026-11-16T03:14:50+00:00",
+    "last_success": "2026-11-16T03:14:39+00:00",
+    "version": "7af1cd6a29142a838e88",
+    "message": "Forecast validated; immutable vintage published"
+  },
+  "official_update": "degraded"
+}
