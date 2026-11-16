@@ -1,0 +1,44 @@
+name: Publish display-only revision
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/display.yml']
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: cpi-display-pages
+  cancel-in-progress: false
+jobs:
+  display:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate browser helpers
+        run: |
+          node --check web/app.js
+          node --check web/forecast.js
+          node tests/test_frontend.mjs
+      - name: Copy presentation assets; preserve forecast data
+        run: |
+          python - <<'PY'
+          import pathlib, json, hashlib, shutil
+          root=pathlib.Path('.')
+          pointer=json.loads((root/'dist/current_forecast.json').read_text())
+          forecast=root/'dist'/pointer['path']
+          before=hashlib.sha256(forecast.read_bytes()).hexdigest()
+          for f in (root/'web').iterdir():
+              if f.is_file(): shutil.copy2(f,root/'dist'/f.name)
+          assert before==hashlib.sha256(forecast.read_bytes()).hexdigest()
+          print(json.dumps({'forecast_version':pointer['version'],'sha256':before,'model_fit':False}))
+          PY
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - uses: actions/deploy-pages@v4
+        id: deployment
