@@ -12,4 +12,6 @@ Artifacts: eight requested Excel worksheets, row-level backtests, per-class mode
 
 Local browser: six forecast charts rendered through 2027-12; latest valid official headline/core cards show 2026-09 and explain October NA. Separate price-estimate, estimated-weight and provisional-weight strips are present. Online deployment and mobile acceptance are recorded after the GitHub Actions deployment; this document alone is not evidence of live deployment.
 
+Cloud run [43796842511](https://github.com/minzeliang42-create/cpi-inflation-lab/actions/runs/43796842511) completed research and Pages deployment successfully. Both pre-update and post-forecast test stages passed. Actual site opened at https://minzeliang42-create.github.io/cpi-inflation-lab/ . Browser checks at 1342px and 390px verified six charts through December 2027, no document horizontal overflow, high-scenario switching, 68 future component rows and 100% weights. CSV/Excel/JSON numerical identity was tested locally. Screenshot capture in the browser connector timed out; responsive geometry and rendered DOM were inspected directly.
+
 BLS source limitations remain: price/API RI channels work; some official HTML/annual-weight/calendar endpoints return 403. No unofficial substitute is labeled official. Forecasts are conditional model results, not BLS observations.

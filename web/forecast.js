@@ -3,12 +3,12 @@
 let FORECAST,FORECAST_BASE,HISTORY,forecastScenario='base';
 const FC_LABEL={base:'Base · 基准',low:'Low · 较低通胀路径',high:'High · 较高通胀路径'};
 Object.assign(LABEL,{model:'模型',asof:'预测基准月',forecast_horizon:'预测步长（月）',
- window_forecast_observations:'窗口含预测同比月数',window_estimated_observations:'窗口含估算同比月数'});
+ window_forecast_observations:'窗口含预测同比月数',window_estimated_observations:'窗口含估算同比月数',price_index_lower80:'价格80%下界',price_index_upper80:'价格80%上界',yoy_lower80:'YoY80%下界',yoy_upper80:'YoY80%上界',uncertainty_type:'不确定性口径'});
 
 function forecastTraces(key,rows,historical,metric){
  const first=historical.at(-1),forecastLine=(field,color,width=2)=>({
   x:[first.month,...rows.map(r=>r.month)].map(m=>m+'-01'),y:[first[field],...rows.map(r=>r[field])],
-  customdata:['历史边界',...rows.map(r=>`${r.scenario} · Forecast<br>As of ${r.asof} · ${r.model}<br>${stateNote(r)}${r.window_forecast_observations!=null?`<br>60月窗口：预测同比 ${r.window_forecast_observations} 月；估算同比最多 ${r.window_estimated_observations} 月`:''}${r[field+'_lower80']!=null?`<br>80%: ${fmt(r[field+'_lower80'],3)}–${fmt(r[field+'_upper80'],3)}<br>95%: ${fmt(r[field+'_lower95'],3)}–${fmt(r[field+'_upper95'],3)}`:''}`)],
+  customdata:['历史边界',...rows.map(r=>`${r.scenario} · Forecast<br>As of ${r.asof} · ${r.model}<br>Model ${FORECAST.meta.model_version} · Generated ${localTime(FORECAST.meta.generated_at)}<br>${stateNote(r)}${r.window_forecast_observations!=null?`<br>60月窗口：预测同比 ${r.window_forecast_observations} 月；估算同比最多 ${r.window_estimated_observations} 月`:''}${r[field+'_lower80']!=null?`<br>80%: ${fmt(r[field+'_lower80'],3)}–${fmt(r[field+'_upper80'],3)}<br>95%: ${fmt(r[field+'_lower95'],3)}–${fmt(r[field+'_upper95'],3)}`:''}`)],
   name:(LABEL[field]||field)+' · Forecast',type:'scatter',mode:'lines',connectgaps:false,
   line:{color,width,dash:'dash'},hovertemplate:`%{x|%Y-%m}<br>${LABEL[field]||field}: %{y:.3f} ${CONFIG[key].unit}<br>%{customdata}<extra></extra>`});
  const result=[];
@@ -52,9 +52,10 @@ async function renderForecast(){
   table($(`#table-${key}`),[...hist,...rows].reverse(),[...c.cols,'data_status','weight_status','uses_estimated_price',...intervalCols,'model','asof']);
   $(`#forecast-card-${key}`).innerHTML=rows.slice(0,2).map(r=>`<span><b>${r.month}</b> ${LABEL[metric==='none'?(key==='measures'||key==='acceleration'?'p50':'weight_pct'):metric]}: <strong>${fmt(r[metric==='none'?(key==='measures'||key==='acceleration'?'p50':'weight_pct'):metric],3)} ${c.unit}</strong></span>`).join('');
  }
- renderComponents();renderDrivers();
+ renderComponents();annotateForecastComponents();renderDrivers();
 }
 
+function annotateForecastComponents(){if(selectedMonthRows[0]?.data_status==='forecast')$('#component-summary').textContent+=' · Forecast：价格及权重均为预测 · '+FC_LABEL[forecastScenario];}
 function renderDrivers(){
  const latest=HISTORY.components.filter(r=>r.month===FORECAST.meta.asof);
  const first=FORECAST.scenarios[forecastScenario].components.filter(r=>r.month===FORECAST.meta.forecast_start);
@@ -96,7 +97,7 @@ async function initForecast(){
   const months=[...new Set([...DATA.components.map(r=>r.month),...FORECAST.scenarios.base.components.map(r=>r.month)])].sort().reverse();
   const selected=$('#month-select').value;$('#month-select').innerHTML=months.map(m=>`<option>${m}</option>`).join('');$('#month-select').value=selected;
   $('#forecast-scenario').addEventListener('change',async e=>{forecastScenario=e.target.value;await renderForecast();});
-  researchTables();await renderForecast();
+  $('#month-select').addEventListener('change',annotateForecastComponents);researchTables();await renderForecast();
   $('#version').textContent+=` · Forecast ${manifest.version.slice(0,8)} · V2.0`;
  }catch(e){console.error('Forecast loading failed',e);$('#update-message').textContent+=' · 预测读取失败，历史数据仍可用：'+e.message;}
 }
