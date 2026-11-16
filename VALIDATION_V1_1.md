@@ -47,3 +47,16 @@ Official、Estimated、Provisional、Forecast分别定义为官方观测、批�
 本地21项Python测试通过；云端跳过仅本地存在的私人原Excel检查，其余测试执行。新增Node纵轴测试覆盖全历史、限定区间、区间外峰值、零值、缺失及普通Diffusion固定范围。JSON/CSV/Excel逐值一致性包含两条新Acceleration列。后续运行入口及部署结果见GitHub Actions和DEPLOYMENT.md。
 
 运行：`python -m cpi.build`、`python -m unittest discover -s tests -v`、`node tests/test_frontend.mjs`。
+
+
+## 实际上线验收结果
+
+V1.1提交：05d037992488f9e8d39f31aac2c2944c448e8e86。
+
+[GitHub Actions运行43789122561](https://github.com/minzeliang42-create/cpi-inflation-lab/actions/runs/43789122561)：research、deploy均success。Python运行21项，20项通过，1项原始私人Excel检查仅在本地执行、云端跳过；Node纵轴边界测试通过。最新BLS检查时间为北京时间2026-11-16 09:56:41，更新0条观察，渠道状态degraded。
+
+已实际打开公网网址，确认meta.app_version=1.1、6张Plotly图、94/82/94/94/35/35个月历史表和68类查询。新增Acceleration曲线、图例、悬停pp值、历史表列均在公网显示。六组CSV下载及Excel下载均HTTP 200，Excel ZIP文件签名PK正确。界面表格和卡片分别显示3位、2位小数，下载文件保留完整计算精度。
+
+实际点击两张t-Diffusion的3Y、5Y、All按钮，纵轴分别保持0–5.1%和0–6.8%（因为仅35个月历史）；较短可见区间另测会调整上限，普通Diffusion仍0–100%。390px移动端页面宽度375px，六张图宽338.67px，无页面横向溢出；桌面1342px布局正常；浏览器控制台0错误。
+
+本次浏览器自动截图接口超时，布局验收基于实际页面元素、交互、图表数据及尺寸检查；没有生成本轮视觉截图文件。六张SF Fed原图已实际读取，核对记录见上文。
