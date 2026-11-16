@@ -11,3 +11,5 @@ Browser checks for t-Declines: default 0–6; count-share 80/95 bands 0–15; co
 Frontend automated checks cover 6/8 defaults, future extremes, date bounds, hidden lines and intervals, and ordinary diffusion's unchanged 0–100 axes. Plotly-rendered before/after PNGs were exported from the actual browser into output/readability/ and visually inspected. The export path also verifies stable CSS-safe trace identifiers.
 
 Controls preserve 3Y, 5Y and All History. t chart legends use shared historical/forecast entries and mobile charts have 470px total height, preserving the plotting area. All downloads retain the original interval values even when bands are hidden.
+
+Mobile browser acceptance (390px viewport): actual graph width 339px matches container width 339px; chart height 470px; interval-mode plot height 327px; four-entry legend height 48px. A ResizeObserver and explicit render dimensions prevent stale desktop-width plots from being clipped on mobile. t-Growth defaults 0–8, count intervals 0–17, weight intervals 0–14, then restores 0–8. 3Y, 5Y and All History each recalculate the default range. All 34 Python tests and frontend tests passed.

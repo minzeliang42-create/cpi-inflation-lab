@@ -65,14 +65,16 @@ async function renderForecast(){
    for(const t of display)if(previous.has(t.uid))t.visible=previous.get(t.uid);
    const levelControl=$(`#interval-level-${key}`);levelControl.disabled=metric==='none'||forecastScenario!=='base';
   }
-  const layout={...el.layout,margin:{l:48,r:16,t:24,b:105},legend:{...el.layout.legend,y:-.24,font:{size:9}},shapes:[...statusShapes(hist),
+  const layout={...el.layout,width:el.clientWidth,height:el.clientHeight,margin:{l:48,r:16,t:24,b:105},legend:{...el.layout.legend,y:-.24,font:{size:9}},shapes:[...statusShapes(hist),
    {type:'rect',xref:'x',yref:'paper',x0:FORECAST.meta.forecast_start+'-01',x1:FORECAST.meta.forecast_end+'-28',y0:0,y1:1,fillcolor:'rgba(112,83,147,.035)',line:{width:0},layer:'below'},
    {type:'line',xref:'x',yref:'paper',x0:FORECAST.meta.forecast_start+'-01',x1:FORECAST.meta.forecast_start+'-01',y0:0,y1:1,line:{color:'#705393',width:1,dash:'dot'}}],
    annotations:[{xref:'x',yref:'paper',x:FORECAST.meta.forecast_start+'-01',y:1,text:'Forecast →',showarrow:false,xanchor:'left',font:{size:10,color:'#705393'}}]};
   if(key.includes('declines')||key.includes('growth'))layout.yaxis={...layout.yaxis,range:diffusionRange(key,el._displayRows,...(layout.xaxis.autorange?[]:layout.xaxis.range)),autorange:false};
   if(isTrend){layout.margin.b=75;layout.legend={...layout.legend,y:-.18,groupclick:'togglegroup'};layout.yaxis={...layout.yaxis,...trendAxis(key,display,...(layout.xaxis.autorange?[]:layout.xaxis.range)),autorange:false};}
   await Plotly.react(el,display,layout,{responsive:true,displayModeBar:false});
-  if(isTrend){el._syncTrendAxis=()=>syncTrendAxis(key,el);if(!el._trendEvents){el.on('plotly_restyle',el._syncTrendAxis);el._trendEvents=true;}await el._syncTrendAxis();}
+  if(isTrend){el._syncTrendAxis=()=>syncTrendAxis(key,el);if(!el._trendEvents){el.on('plotly_restyle',el._syncTrendAxis);el._trendEvents=true;
+   el._sizeObserver=new ResizeObserver(()=>{if(el.clientWidth&& (el.layout.width!==el.clientWidth||el.layout.height!==el.clientHeight))Plotly.relayout(el,{width:el.clientWidth,height:el.clientHeight});});el._sizeObserver.observe(el);
+  }await el._syncTrendAxis();}
   const intervalCols=metric==='none'?[]:[metric+'_lower80',metric+'_upper80',metric+'_lower95',metric+'_upper95'];
   intervalCols.forEach(k=>LABEL[k]=k.replaceAll('_',' '));
   table($(`#table-${key}`),[...hist,...rows].reverse(),[...c.cols,'data_status','weight_status','uses_estimated_price',...intervalCols,'model','asof']);
