@@ -57,7 +57,9 @@ async function renderForecast(){
   const isTrend=key.startsWith('t_'),level=$(`#interval-level-${key}`)?.value||'both';
   el._displayRows=[...hist,...rows];
   const previous=new Map(el.data.map(t=>[t.uid,t.visible]));
-  const display=[...traces(key,hist).map((t,i)=>({...t,uid:key+'-history-'+i})),...forecastTraces(key,rows,hist,metric,level)];
+  let display=[...traces(key,hist).map((t,i)=>({...t,uid:key+'-history-'+i})),...forecastTraces(key,rows,hist,metric,level)];
+  const isDistribution=['measures','acceleration'].includes(key);
+  if(isDistribution){display=decorateDistribution(key,display);for(const t of display)if(previous.has(t.uid))t.visible=previous.get(t.uid);}
   if(isTrend){for(const t of display){if(t.line?.width>0){const field=t.name.includes('类别')||t.name.includes('items')?'items_pct':'weight_pct';
     t.legendgroup=key+':share:'+field;t.mode='lines+markers';t.marker={size:t.line.dash?4:3,symbol:t.line.dash?'diamond':'circle',color:t.line.color};
     if(t.line.dash)t.showlegend=false;
@@ -71,7 +73,9 @@ async function renderForecast(){
    annotations:[{xref:'x',yref:'paper',x:FORECAST.meta.forecast_start+'-01',y:1,text:'Forecast →',showarrow:false,xanchor:'left',font:{size:10,color:'#705393'}}]};
   if(key.includes('declines')||key.includes('growth'))layout.yaxis={...layout.yaxis,range:diffusionRange(key,el._displayRows,...(layout.xaxis.autorange?[]:layout.xaxis.range)),autorange:false};
   if(isTrend){layout.margin.b=75;layout.legend={...layout.legend,y:-.18,groupclick:'togglegroup'};layout.yaxis={...layout.yaxis,...trendAxis(key,display,...(layout.xaxis.autorange?[]:layout.xaxis.range)),autorange:false};}
+  if(isDistribution)prepareDistribution(key,el,layout);
   await Plotly.react(el,display,layout,{responsive:true,displayModeBar:false});
+  if(isDistribution)await attachDistribution(key,el);
   if(isTrend){el._syncTrendAxis=()=>syncTrendAxis(key,el);if(!el._trendEvents){el.on('plotly_restyle',el._syncTrendAxis);el._trendEvents=true;
    el._sizeObserver=new ResizeObserver(()=>{if(el.clientWidth&& (el.layout.width!==el.clientWidth||el.layout.height!==el.clientHeight))Plotly.relayout(el,{width:el.clientWidth,height:el.clientHeight});});el._sizeObserver.observe(el);
   }await el._syncTrendAxis();}
@@ -121,6 +125,7 @@ async function initForecast(){
    const fields=key==='measures'||key==='acceleration'?['p50','headline','core','p10','p25','p75','p90']:['weight_pct','items_pct'];
    controls.innerHTML=`<div id="forecast-card-${key}" class="forecast-cards"></div><label>预测经验区间 <select id="interval-${key}">${fields.map(f=>`<option value="${f}">${LABEL[f]}</option>`).join('')}<option value="none">不显示</option></select></label><a href="${FORECAST_BASE+key}_forecast.csv" download>Forecast CSV ↓</a>`;
    $(`#${key} .chart`).before(controls);controls.querySelector('select').addEventListener('change',renderForecast);
+   if(['measures','acceleration'].includes(key))controls.querySelector('select').value='none';
    if(key.startsWith('t_')){
     $(`#${key}`).classList.add('trend-chart');const select=controls.querySelector('select');
     select.querySelector('[value="none"]').textContent='趋势研究 · 不显示区间';select.prepend(select.querySelector('[value="none"]'));select.value='none';

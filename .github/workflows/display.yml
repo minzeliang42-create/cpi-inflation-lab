@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['.github/workflows/display.yml']
+    paths: ['web/**', 'tests/test_frontend.mjs', '.github/workflows/display.yml']
 permissions:
   contents: read
   pages: write
@@ -23,6 +23,7 @@ jobs:
         run: |
           node --check web/app.js
           node --check web/forecast.js
+          node --check web/distribution-axis.js
           node tests/test_frontend.mjs
       - name: Copy presentation assets; preserve forecast data
         run: |

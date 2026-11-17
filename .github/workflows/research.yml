@@ -14,6 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   research:
+    if: ${{ github.event_name != 'push' || !contains(github.event.head_commit.message, '[display-only]') }}
     runs-on: ubuntu-latest
     outputs:
       ready: ${{ steps.artifact.outcome == 'success' }}
