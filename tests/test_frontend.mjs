@@ -40,3 +40,26 @@ const original={uid:'measures-history-5',x:['2026-01'],y:[3.141592653589793],cus
 const before=JSON.stringify([original.x,original.y,original.customdata,original.hovertemplate]);
 decorator('measures',[original]);assert.equal(JSON.stringify([original.x,original.y,original.customdata,original.hovertemplate]),before);
 console.log('Trace styling preserves dates, full-precision values, hover data and templates.');
+const helpers=vm.runInNewContext(distSource+';({distributionWindow,decorateDistribution})');
+const months=[{month:'2019-01'},{month:'2027-12'}];
+assert.equal(JSON.stringify(helpers.distributionWindow(months,0)),JSON.stringify(['2019-01-01','2027-12-31']));
+assert.equal(JSON.stringify(helpers.distributionWindow(months,3)),JSON.stringify(['2025-01-01','2027-12-31']));
+assert.equal(JSON.stringify(helpers.distributionWindow(months,5)),JSON.stringify(['2023-01-01','2027-12-31']));
+const mock=Array.from({length:7},(_,i)=>({uid:'measures-history-'+i,x:['2026-09','2026-10'],y:[i,i>4?null:i],customdata:['official','official'],line:{width:2},fill:'tonexty'}));
+const decorated=helpers.decorateDistribution('measures',mock);
+const points=decorated.filter(t=>t.meta.axisRole==='curve');
+assert.equal(points.length,7);assert.ok(points.every(t=>t.mode==='lines+markers'&&!t.fill));
+assert.ok(decorated.slice(0,6).every(t=>t.meta.axisRole==='shade'&&t.hoverinfo==='skip'));
+assert.equal(points.find(t=>t.meta.field==='core').y[1],null);
+assert.equal(new Set(points.map(t=>t.legendgroup)).size,7);
+console.log('Full-history window, seven independent marker series, isolated fill layers and retained NA checks passed.');
+const forecastFactory=vm.runInNewContext('('+forecast.slice(forecast.indexOf('function forecastTraces('),forecast.indexOf('let forecastRenderQueue'))+')',{
+ forecastScenario:'base',LABEL:{},CONFIG:{measures:{unit:'%'}},FORECAST:{meta:{}},localTime:()=>'',stateNote:()=>'',fmt:x=>x});
+const boundary={month:'2026-10',headline:null,core:null,p10:0,p25:1,p50:3,p75:4,p90:5};
+const future=[{...boundary,month:'2026-11',headline:4,core:2.9},{...boundary,month:'2026-12',headline:4.1,core:3}];
+const futureTraces=forecastFactory('measures',future,[boundary],'none');
+assert.equal(futureTraces.find(t=>t.uid.endsWith('-core')).x[0],'2026-11-01');
+assert.equal(futureTraces.find(t=>t.uid.endsWith('-core')).y[0],2.9);
+assert.equal(futureTraces.find(t=>t.uid.endsWith('-p50')).x[0],'2026-10-01');
+assert.ok(futureTraces.every(t=>t.connectgaps===false));assert.equal(boundary.core,null);
+console.log('Missing historical boundary never erases first forecast point or inserts an interpolated connection.');
