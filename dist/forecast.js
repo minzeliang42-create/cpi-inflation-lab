@@ -21,14 +21,14 @@ function syncTrendAxis(key,el){
   return Plotly.relayout(el,{'yaxis.range':axis.range,'yaxis.dtick':axis.dtick,'yaxis.autorange':false});
 }
 // End pure display helper.
-function forecastTraces(key,rows,historical,metric,level='both'){
- const first=historical.at(-1),forecastLine=(field,color,width=2)=>({
-  x:[first.month,...rows.map(r=>r.month)].map(m=>m+'-01'),y:[first[field],...rows.map(r=>r[field])],
-  customdata:['历史边界',...rows.map(r=>`${r.scenario} · Forecast<br>As of ${r.asof} · ${r.model}<br>Model ${FORECAST.meta.model_version} · Generated ${localTime(FORECAST.meta.generated_at)}<br>${stateNote(r)}${r.window_forecast_observations!=null?`<br>60月窗口：预测同比 ${r.window_forecast_observations} 月；估算同比最多 ${r.window_estimated_observations} 月`:''}${r[field+'_lower80']!=null?`<br>80%: ${fmt(r[field+'_lower80'],3)}–${fmt(r[field+'_upper80'],3)}<br>95%: ${fmt(r[field+'_lower95'],3)}–${fmt(r[field+'_upper95'],3)}`:''}`)],
+function forecastTraces(key,rows,historical,metric,level='both',scene=forecastScenario){
+ const first=historical.at(-1),forecastLine=(field,color,width=2)=>{const join=typeof first[field]==='number'&&Number.isFinite(first[field]);return ({
+  x:[...(join?[first.month]:[]),...rows.map(r=>r.month)].map(m=>m+'-01'),y:[...(join?[first[field]]:[]),...rows.map(r=>r[field])],
+  customdata:[...(join?['历史边界 · '+first.month]:[]),...rows.map(r=>`${r.scenario} · Forecast<br>As of ${r.asof} · ${r.model}<br>Model ${FORECAST.meta.model_version} · Generated ${localTime(FORECAST.meta.generated_at)}<br>${stateNote(r)}${r.window_forecast_observations!=null?`<br>60月窗口：预测同比 ${r.window_forecast_observations} 月；估算同比最多 ${r.window_estimated_observations} 月`:''}${r[field+'_lower80']!=null?`<br>80%: ${fmt(r[field+'_lower80'],3)}–${fmt(r[field+'_upper80'],3)}<br>95%: ${fmt(r[field+'_lower95'],3)}–${fmt(r[field+'_upper95'],3)}`:''}`)],
   uid:key+'-forecast-'+field,name:(LABEL[field]||field)+' · Forecast',type:'scatter',mode:'lines',connectgaps:false,
-  line:{color,width,dash:'dash'},hovertemplate:`%{x|%Y-%m}<br>${LABEL[field]||field}: %{y:.3f} ${CONFIG[key].unit}<br>%{customdata}<extra></extra>`});
+  line:{color,width,dash:'dash'},hovertemplate:`%{x|%Y-%m}<br>${LABEL[field]||field}: %{y:.3f} ${CONFIG[key].unit}<br>%{customdata}<extra></extra>`});};
  const result=[];
- if(forecastScenario==='base'&&metric!=='none'){
+ if(scene==='base'&&metric!=='none'){
   for(const [low,high,opacity,name] of [['lower95','upper95',.10,'95% empirical interval'],['lower80','upper80',.20,'80% empirical interval']]){
    if(level!=='both'&&!name.startsWith(level))continue;
    const group=key+'-'+metric+'-'+low;const x=rows.map(r=>r.month+'-01');
@@ -49,15 +49,17 @@ function forecastTraces(key,rows,historical,metric,level='both'){
  return result;
 }
 
-async function renderForecast(){
- const scenario=FORECAST.scenarios[forecastScenario];
+let forecastRenderQueue=Promise.resolve();
+function renderForecast(){forecastRenderQueue=forecastRenderQueue.catch(e=>console.error(e)).then(drawForecast);return forecastRenderQueue;}
+async function drawForecast(){
+ const scene=forecastScenario,scenario=FORECAST.scenarios[scene];
  DATA.components=[...HISTORY.components,...scenario.components];
  for(const [key,c] of Object.entries(CONFIG)){
   const rows=scenario.groups[key],hist=HISTORY.groups[key],el=$(`#chart-${key}`),metric=$(`#interval-${key}`).value;
   const isTrend=key.startsWith('t_'),level=$(`#interval-level-${key}`)?.value||'both';
   el._displayRows=[...hist,...rows];
   const previous=new Map(el.data.map(t=>[t.uid,t.visible]));
-  let display=[...traces(key,hist).map((t,i)=>({...t,uid:key+'-history-'+i})),...forecastTraces(key,rows,hist,metric,level)];
+  let display=[...traces(key,hist).map((t,i)=>({...t,uid:key+'-history-'+i})),...forecastTraces(key,rows,hist,metric,level,scene)];
   const isDistribution=['measures','acceleration'].includes(key);
   if(isDistribution){display=decorateDistribution(key,display);for(const t of display)if(previous.has(t.uid))t.visible=previous.get(t.uid);}
   if(isTrend){for(const t of display){if(t.line?.width>0){const field=t.name.includes('类别')||t.name.includes('items')?'items_pct':'weight_pct';
@@ -74,7 +76,7 @@ async function renderForecast(){
   if(key.includes('declines')||key.includes('growth'))layout.yaxis={...layout.yaxis,range:diffusionRange(key,el._displayRows,...(layout.xaxis.autorange?[]:layout.xaxis.range)),autorange:false};
   if(isTrend){layout.margin.b=75;layout.legend={...layout.legend,y:-.18,groupclick:'togglegroup'};layout.yaxis={...layout.yaxis,...trendAxis(key,display,...(layout.xaxis.autorange?[]:layout.xaxis.range)),autorange:false};}
   if(isDistribution)prepareDistribution(key,el,layout);
-  await Plotly.react(el,display,layout,{responsive:true,displayModeBar:false});
+  el._renderingDistribution=true;try{await Plotly.react(el,display,layout,{responsive:true,displayModeBar:false});}finally{el._renderingDistribution=false;}
   if(isDistribution)await attachDistribution(key,el);
   if(isTrend){el._syncTrendAxis=()=>syncTrendAxis(key,el);if(!el._trendEvents){el.on('plotly_restyle',el._syncTrendAxis);el._trendEvents=true;
    el._sizeObserver=new ResizeObserver(()=>{if(el.clientWidth&& (el.layout.width!==el.clientWidth||el.layout.height!==el.clientHeight))Plotly.relayout(el,{width:el.clientWidth,height:el.clientHeight});});el._sizeObserver.observe(el);
