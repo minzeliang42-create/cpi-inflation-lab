@@ -47,7 +47,7 @@ function prepareDistribution(key,el,layout){
  layout.yaxis={...layout.yaxis,autorange:false,zeroline:true,zerolinecolor:'#526b7b',zerolinewidth:1.5,title:{text:key==='acceleration'?'Percentage points (pp)':'Percent (%)'}};
 }
 async function syncDistribution(key,el){
- const s=el._distribution;if(!s)return;const dates=el.layout.xaxis.autorange?[]:el.layout.xaxis.range||[];
+ const s=el._distribution;if(!s)return;const dates=el.layout.xaxis.autorange?[null,null]:el.layout.xaxis.range||[null,null];
  const range=s.mode==='manual'?s.range:distributionRange(key,el.data,...dates,s.includeIntervals);
  const intervals=distributionExtent(el.data.filter(t=>t.meta?.axisRole==='interval'),...dates,true);
  const points=distributionExtent(el.data,...dates,false),cutBands=intervals&&(intervals.min<range[0]||intervals.max>range[1]);
