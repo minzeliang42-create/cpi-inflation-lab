@@ -17,3 +17,13 @@ Baseline public artifacts (SHA-256) before the correction:
 - forecast.json: 5d7f8d06ed93935322ebd2491016b7237571dcb1b6d34e072760524004e9b6f7
 
 Deployment is display-only. No input, CPI formula, historical calculation or forecast-model file is changed.
+
+## Production acceptance
+
+Code commit: acffedf24a284c2d4a1bec9c6a9ff2be302a9461. Pages workflow 44032730606 completed successfully; the research workflow for this display-only commit was skipped. The live page loaded app/distribution-axis/forecast assets v2.1.2.
+
+Live artifact hashes matched all four baselines above byte-for-byte. All 28 historical/forecast curve arrays matched the source JSON, including every NA and the conditional valid historical anchor. Measures starts 2019-01-01; Acceleration starts 2020-01-01; both end 2027-12-31. All History is selected initially. 3Y starts 2025-01-01; 5Y starts 2023-01-01. Every finite visible point fits the automatic range in each window.
+
+Browser checks passed at 1365x900 and 390x844: seven fields can each be isolated; legend toggling Core affects only its historical/forecast pair, persists through react, and can be restored. Auto, manual -1..5, Reset, rapid scenario switching, interval on/off, manual interval clipping warnings and the full-interval option passed. Acceleration Auto retains zero. Mobile plots are 339x560 with a 275x381 drawing region; all seven legend entries remain inside the chart and the page has no horizontal overflow. Rendered markers: 757 Measures and 671 Acceleration (including valid historical anchors).
+
+Live September 2026 Measures: Headline 3.737684729064039, Core 2.564358351168661, Median 3.249966472174305. October 2026 Median is 3.404758905449153 while Headline/Core are null. Actual browser hover on October Median displays the value plus the official NA note. Core forecast starts directly at November 2026 (Measures 2.997356393908412; Acceleration 0.364003699210214), without drawing through the missing October official value. A browser Plotly image export was visually inspected: seven lines/markers, solid history, dashed forecast, blue distribution fills below curves and the forecast boundary are present.
