@@ -52,6 +52,7 @@ jobs:
           python -m cpi.build
           python -m unittest discover -s tests -v
           node tests/test_frontend.mjs
+          node tests/test_card_frontend.mjs
           node --check web/forecast.js
       - name: Check official BLS data
         id: update
@@ -73,6 +74,8 @@ jobs:
           else
             python -m cpi.forecast
           fi
+      - name: Refresh isolated nonofficial card estimates
+        run: python -m cpi.card_estimates
       - name: Verify generated release
         run: python -m unittest discover -s tests -v
       - name: Save data and update log

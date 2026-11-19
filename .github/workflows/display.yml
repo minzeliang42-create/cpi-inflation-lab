@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['web/**', 'tests/test_frontend.mjs', '.github/workflows/display.yml']
+    paths: ['web/**', 'tests/test_frontend.mjs', 'cpi/card_estimates.py', 'tests/test_card_estimates.py', 'tests/test_card_frontend.mjs', '.github/workflows/display.yml']
 permissions:
   contents: read
   pages: write
@@ -25,6 +25,7 @@ jobs:
           node --check web/forecast.js
           node --check web/distribution-axis.js
           node tests/test_frontend.mjs
+          node tests/test_card_frontend.mjs
       - name: Copy presentation assets; preserve forecast data
         run: |
           python - <<'PY'
@@ -38,6 +39,10 @@ jobs:
           assert before==hashlib.sha256(forecast.read_bytes()).hexdigest()
           print(json.dumps({'forecast_version':pointer['version'],'sha256':before,'model_fit':False}))
           PY
+      - name: Build isolated nonofficial card estimates
+        run: |
+          python -m unittest discover -s tests -p test_card_estimates.py -v
+          python -m cpi.card_estimates
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
