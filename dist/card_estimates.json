@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "historical_version": "f498c1ae7b2597df-ca52403f",
+  "generated_at": "2026-11-19T03:45:09+00:00",
+  "scope": "CPI Measures cards only",
+  "estimates": {
+    "headline": {
+      "month": "2026-10",
+      "series_id": "CUUR0000SA0",
+      "status": "estimated",
+      "estimated_yoy": 4.022111815676888,
+      "reason": "Nonofficial ex-post interpolation; official historical series remains NA",
+      "base_month": "2025-10",
+      "estimated_base_index": 324.46082290470736,
+      "method": "log_linear_single_interior_month_v1",
+      "method_reference": "cpi/forecast_models.py:prepare (same log-space interpolation; no model retraining)",
+      "formula": "base_hat = exp((ln(P[base-1])+ln(P[base+1]))/2); yoy_hat = 100*(P[target]/base_hat-1)",
+      "inputs": {
+        "current": {
+          "month": "2026-10",
+          "code": "SA0",
+          "kind": "price",
+          "value": 337.511,
+          "status": "official",
+          "scale": "index",
+          "source": "workbook:Price_Index",
+          "source_hash": "cbdc075fa90d99ba7f1cf9508378c875da002a6261c249e0f7408c3598c10df5",
+          "published_at": "",
+          "fetched_at": "",
+          "basis": "",
+          "method": "Imported official observation; source workbook preserved"
+        },
+        "before": {
+          "month": "2025-09",
+          "code": "SA0",
+          "kind": "price",
+          "value": 324.8,
+          "status": "official",
+          "scale": "index",
+          "source": "workbook:Price_Index",
+          "source_hash": "cbdc075fa90d99ba7f1cf9508378c875da002a6261c249e0f7408c3598c10df5",
+          "published_at": "",
+          "fetched_at": "",
+          "basis": "",
+          "method": "Imported official observation; source workbook preserved"
+        },
+        "after": {
+          "month": "2025-11",
+          "code": "SA0",
+          "kind": "price",
+          "value": 324.122,
+          "status": "official",
+          "scale": "index",
+          "source": "workbook:Price_Index",
+          "source_hash": "cbdc075fa90d99ba7f1cf9508378c875da002a6261c249e0f7408c3598c10df5",
+          "published_at": "",
+          "fetched_at": "",
+          "basis": "",
+          "method": "Imported official observation; source workbook preserved"
+        }
+      },
+      "official_source": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+      "missing_source": "https://www.bls.gov/cpi/additional-resources/2025-federal-government-shutdown-impact-cpi.htm"
+    },
+    "core": {
+      "month": "2026-10",
+      "series_id": "CUUR0000SA0L1E",
+      "status": "estimated",
+      "estimated_yoy": 2.8149267007604672,
+      "reason": "Nonofficial ex-post interpolation; official historical series remains NA",
+      "base_month": "2025-10",
+      "estimated_base_index": 330.6144456916544,
+      "method": "log_linear_single_interior_month_v1",
+      "method_reference": "cpi/forecast_models.py:prepare (same log-space interpolation; no model retraining)",
+      "formula": "base_hat = exp((ln(P[base-1])+ln(P[base+1]))/2); yoy_hat = 100*(P[target]/base_hat-1)",
+      "inputs": {
+        "current": {
+          "month": "2026-10",
+          "code": "SA0L1E",
+          "kind": "price",
+          "value": 339.921,
+          "status": "official",
+          "scale": "index",
+          "source": "workbook:Price_Index",
+          "source_hash": "cbdc075fa90d99ba7f1cf9508378c875da002a6261c249e0f7408c3598c10df5",
+          "published_at": "",
+          "fetched_at": "",
+          "basis": "",
+          "method": "Imported official observation; source workbook preserved"
+        },
+        "before": {
+          "month": "2025-09",
+          "code": "SA0L1E",
+          "kind": "price",
+          "value": 330.804,
+          "status": "official",
+          "scale": "index",
+          "source": "workbook:Price_Index",
+          "source_hash": "cbdc075fa90d99ba7f1cf9508378c875da002a6261c249e0f7408c3598c10df5",
+          "published_at": "",
+          "fetched_at": "",
+          "basis": "",
+          "method": "Imported official observation; source workbook preserved"
+        },
+        "after": {
+          "month": "2025-11",
+          "code": "SA0L1E",
+          "kind": "price",
+          "value": 330.425,
+          "status": "official",
+          "scale": "index",
+          "source": "workbook:Price_Index",
+          "source_hash": "cbdc075fa90d99ba7f1cf9508378c875da002a6261c249e0f7408c3598c10df5",
+          "published_at": "",
+          "fetched_at": "",
+          "basis": "",
+          "method": "Imported official observation; source workbook preserved"
+        }
+      },
+      "official_source": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+      "missing_source": "https://www.bls.gov/cpi/additional-resources/2025-federal-government-shutdown-impact-cpi.htm"
+    }
+  },
+  "input_sha256": {
+    "research.json": "bebc6d431710165c32f3e3c631f35d23f0afdc6f0089cb90771e8e789f02056d",
+    "provenance.json": "3507f0a8baa6e3fa0cbd860b9f431c7f2fbfd55e6070d6ba2d7fc5ce5734e792"
+  }
+}

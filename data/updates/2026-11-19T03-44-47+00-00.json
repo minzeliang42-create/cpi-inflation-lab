@@ -1,0 +1,141 @@
+{
+  "status": {
+    "state": "degraded",
+    "last_attempt": "2026-11-19T03:44:47+00:00",
+    "last_success": "2026-11-19T03:45:02+00:00",
+    "changed_observations": 0,
+    "message": "BLS价格检查成功；68类官方月度权重检查成功；部分来源受限，详见更新日志。",
+    "warnings": [
+      "Table 02: 403 Client Error: Forbidden for url: https://www.bls.gov/news.release/cpi.t02.htm",
+      "Table 01: 403 Client Error: Forbidden for url: https://www.bls.gov/news.release/cpi.t01.htm",
+      "新闻稿权重表暂不可达；采用已核验的API前一月口径，保留该项检查告警",
+      "年度权重检查：403 Client Error: Forbidden for url: https://www.bls.gov/cpi/tables/relative-importance/",
+      "发布日期检查：403 Client Error: Forbidden for url: https://www.bls.gov/schedule/news_release/cpi.htm"
+    ],
+    "weight_audit": {
+      "field": "aspects[name=Relative Importance]",
+      "excluded_field": "Relative Importance for previous year",
+      "reference_rule": "observation month minus one calendar month",
+      "complete_months": [
+        "2024-12",
+        "2025-01",
+        "2025-02",
+        "2025-03",
+        "2025-04",
+        "2025-05",
+        "2025-06",
+        "2025-07",
+        "2025-08",
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09"
+      ],
+      "latest_reference_month": "2026-09",
+      "header_verified": false
+    },
+    "source_channels": [
+      {
+        "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+        "http_status": 200,
+        "fetched_at": "2026-11-19T03:44:47+00:00"
+      },
+      {
+        "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+        "http_status": 200,
+        "fetched_at": "2026-11-19T03:44:48+00:00"
+      },
+      {
+        "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+        "http_status": 200,
+        "fetched_at": "2026-11-19T03:44:49+00:00"
+      },
+      {
+        "url": "https://www.bls.gov/news.release/cpi.t02.htm",
+        "http_status": 403,
+        "fetched_at": "2026-11-19T03:44:50+00:00"
+      },
+      {
+        "url": "https://www.bls.gov/news.release/cpi.t01.htm",
+        "http_status": 403,
+        "fetched_at": "2026-11-19T03:44:51+00:00"
+      },
+      {
+        "url": "https://www.bls.gov/cpi/tables/relative-importance/",
+        "http_status": 403,
+        "fetched_at": "2026-11-19T03:44:52+00:00"
+      },
+      {
+        "url": "https://www.bls.gov/schedule/news_release/cpi.htm",
+        "http_status": 403,
+        "fetched_at": "2026-11-19T03:44:53+00:00"
+      }
+    ]
+  },
+  "requests": [
+    {
+      "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+      "http_status": 200,
+      "sha256": "12f1be5d5b2dff5a29a53a8364497f44778a022d114ed63bddb513108fcc0c65",
+      "fetched_at": "2026-11-19T03:44:47+00:00",
+      "published_at": null,
+      "raw_file": "data/raw/2026-11-19/12f1be5d5b2dff5a29a53a8364497f44778a022d114ed63bddb513108fcc0c65.json"
+    },
+    {
+      "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+      "http_status": 200,
+      "sha256": "ec6aaa9bdebc3f4be95456227e2ae19ebb67a2fbc6685eb0e71b4e4779d0cc3f",
+      "fetched_at": "2026-11-19T03:44:48+00:00",
+      "published_at": null,
+      "raw_file": "data/raw/2026-11-19/ec6aaa9bdebc3f4be95456227e2ae19ebb67a2fbc6685eb0e71b4e4779d0cc3f.json"
+    },
+    {
+      "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+      "http_status": 200,
+      "sha256": "bb307ddf2303336c25ecfa2173495c5675e19fe39581cbb5ef590fe519a822e0",
+      "fetched_at": "2026-11-19T03:44:49+00:00",
+      "published_at": null,
+      "raw_file": "data/raw/2026-11-19/bb307ddf2303336c25ecfa2173495c5675e19fe39581cbb5ef590fe519a822e0.json"
+    },
+    {
+      "url": "https://www.bls.gov/news.release/cpi.t02.htm",
+      "http_status": 403,
+      "sha256": "948061dc5e2b0d4997b54abe712bf9cca3df1ad3cd8f9ce79f8bc04894572d77",
+      "fetched_at": "2026-11-19T03:44:50+00:00",
+      "published_at": null,
+      "raw_file": "data/raw/2026-11-19/948061dc5e2b0d4997b54abe712bf9cca3df1ad3cd8f9ce79f8bc04894572d77.txt"
+    },
+    {
+      "url": "https://www.bls.gov/news.release/cpi.t01.htm",
+      "http_status": 403,
+      "sha256": "b5fd1c9ca79649f9b1b9bbdeefdfe90dc2fd08a5d0ae48f63a1fd25e11e45034",
+      "fetched_at": "2026-11-19T03:44:51+00:00",
+      "published_at": null,
+      "raw_file": "data/raw/2026-11-19/b5fd1c9ca79649f9b1b9bbdeefdfe90dc2fd08a5d0ae48f63a1fd25e11e45034.txt"
+    },
+    {
+      "url": "https://www.bls.gov/cpi/tables/relative-importance/",
+      "http_status": 403,
+      "sha256": "421b3b5685a95057ad5cb6a8699d27c41aa085852fab23bb491d1b316175098d",
+      "fetched_at": "2026-11-19T03:44:52+00:00",
+      "published_at": null,
+      "raw_file": "data/raw/2026-11-19/421b3b5685a95057ad5cb6a8699d27c41aa085852fab23bb491d1b316175098d.txt"
+    },
+    {
+      "url": "https://www.bls.gov/schedule/news_release/cpi.htm",
+      "http_status": 403,
+      "sha256": "5ef71d4bdd6311cbefaa6f5210572d92a5176a3fdcae01b917d54f6f8b3dbeba",
+      "fetched_at": "2026-11-19T03:44:53+00:00",
+      "published_at": null,
+      "raw_file": "data/raw/2026-11-19/5ef71d4bdd6311cbefaa6f5210572d92a5176a3fdcae01b917d54f6f8b3dbeba.txt"
+    }
+  ],
+  "changes": []
+}

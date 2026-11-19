@@ -1,0 +1,6 @@
+.card-estimated{border-left:3px solid #b88a32;padding-left:10px}
+.card-estimated .badge{display:inline-block;font-size:10px;white-space:normal}
+.card-estimated strong{color:#8a611a}
+.card-official{display:block;margin-top:6px;color:#173d55;font-weight:600}
+.card-estimate-note{font-size:12px;line-height:1.7;background:#fff8e8;border-left:3px solid #b88a32;padding:10px 12px;margin:10px 0;overflow-wrap:anywhere}
+@media(max-width:600px){.card-estimated{min-width:0}.card-estimated span{line-height:1.5}.card-estimated small{white-space:normal}}
