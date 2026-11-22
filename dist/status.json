@@ -1,7 +1,7 @@
 {
   "state": "degraded",
-  "last_attempt": "2026-11-21T03:20:45+00:00",
-  "last_success": "2026-11-21T03:21:01+00:00",
+  "last_attempt": "2026-11-22T02:28:27+00:00",
+  "last_success": "2026-11-22T02:28:38+00:00",
   "changed_observations": 0,
   "message": "BLS价格检查成功；68类官方月度权重检查成功；部分来源受限，详见更新日志。",
   "warnings": [
@@ -44,37 +44,37 @@
     {
       "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
       "http_status": 200,
-      "fetched_at": "2026-11-21T03:20:46+00:00"
+      "fetched_at": "2026-11-22T02:28:27+00:00"
     },
     {
       "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
       "http_status": 200,
-      "fetched_at": "2026-11-21T03:20:46+00:00"
+      "fetched_at": "2026-11-22T02:28:28+00:00"
     },
     {
       "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
       "http_status": 200,
-      "fetched_at": "2026-11-21T03:20:47+00:00"
+      "fetched_at": "2026-11-22T02:28:29+00:00"
     },
     {
       "url": "https://www.bls.gov/news.release/cpi.t02.htm",
       "http_status": 403,
-      "fetched_at": "2026-11-21T03:20:48+00:00"
+      "fetched_at": "2026-11-22T02:28:30+00:00"
     },
     {
       "url": "https://www.bls.gov/news.release/cpi.t01.htm",
       "http_status": 403,
-      "fetched_at": "2026-11-21T03:20:49+00:00"
+      "fetched_at": "2026-11-22T02:28:31+00:00"
     },
     {
       "url": "https://www.bls.gov/cpi/tables/relative-importance/",
       "http_status": 403,
-      "fetched_at": "2026-11-21T03:20:50+00:00"
+      "fetched_at": "2026-11-22T02:28:32+00:00"
     },
     {
       "url": "https://www.bls.gov/schedule/news_release/cpi.htm",
       "http_status": 403,
-      "fetched_at": "2026-11-21T03:20:51+00:00"
+      "fetched_at": "2026-11-22T02:28:33+00:00"
     }
   ]
 }
