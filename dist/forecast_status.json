@@ -1,6 +1,6 @@
 {
   "state": "unchanged",
-  "checked_at": "2026-11-24T22:45:15+00:00",
+  "checked_at": "2026-11-25T04:59:18+00:00",
   "last_success": "2026-11-16T03:14:39+00:00",
   "message": "Inputs and model unchanged; retained validated forecast, no refit",
   "version": "7af1cd6a29142a838e88"
