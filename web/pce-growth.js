@@ -10,8 +10,12 @@ function diffusionComparison(cpi,pce){
 }
 async function addPceGrowth(){
  const parent=document.getElementById('growth'),box=document.createElement('section');box.id='pce-growth';box.className='pce-growth-addon';box.setAttribute('aria-labelledby','pce-growth-title');
- box.innerHTML='<h4 id="pce-growth-title">PCE Diffusion Growth <span>— San Francisco Fed</span></h4><p class="pce-growth-source">正在读取官方PCE扩散历史…</p><div id="pce-growth-chart" class="chart pce-growth-plot" role="img" aria-label="PCE Diffusion Growth官方历史图"></div><p class="pce-growth-range-note"></p><h4 class="diffusion-comparison-title">CPI vs PCE · Inflation Diffusion Comparison</h4><p id="diffusion-comparison" class="diffusion-comparison"></p><details class="pce-growth-details"><summary>PCE详细数据与来源</summary><div data-pce-growth-detail></div></details>';
- parent.querySelector('.data-panel').before(box);
+ box.innerHTML='<h4 id="pce-growth-title">PCE Diffusion Growth <span>— San Francisco Fed</span></h4><p class="pce-growth-source">正在读取官方PCE扩散历史…</p><div id="pce-growth-chart" class="chart pce-growth-plot" role="img" aria-label="PCE Diffusion Growth官方历史图"></div><p class="pce-growth-range-note"></p><h4 class="diffusion-comparison-title">CPI vs PCE · Diffusion Growth Comparison</h4><p id="diffusion-comparison" class="diffusion-comparison"></p><details class="pce-growth-details"><summary>PCE详细数据与来源</summary><div data-pce-growth-detail></div></details>';
+ const originalPlot=document.getElementById('chart-growth');originalPlot.after(box);
+ const ranges=parent.querySelector('.range-buttons');originalPlot.before(ranges);ranges.classList.add('growth-shared-ranges');
+ const oneYear=document.createElement('button');oneYear.type='button';oneYear.dataset.years='1';oneYear.textContent='12M';
+ oneYear.onclick=async()=>{ranges.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b===oneYear));await originalPlot._distributionRangeChange(1);};ranges.prepend(oneYear);
+
  try{
  const response=await fetch('pce_growth.json',{cache:'no-store'});if(!response.ok)throw Error('官方历史文件暂不可用');PCE_GROWTH=await response.json();
  const rows=PCE_GROWTH.rows,meta=PCE_GROWTH.meta,cpi=document.getElementById('chart-growth'),pce=document.getElementById('pce-growth-chart');pce._historyRows=rows;
@@ -22,7 +26,7 @@ async function addPceGrowth(){
  const latest=historicalWindow(rows)[1];const mirrorRange=(range,end)=>{const start=String(range[0]).slice(0,10),stop=String(range[1]).slice(0,10);return [start,start>end?stop:(stop>end?end:stop)];};
  await Plotly.newPlot(pce,traces,{width:pce.clientWidth,height:pce.clientHeight,paper_bgcolor:'#fff',plot_bgcolor:'#fff',font:{family:'Arial, Microsoft YaHei, sans-serif',size:11,color:'#657681'},margin:{l:48,r:16,t:12,b:75},hovermode:'x unified',xaxis:{type:'date',range:mirrorRange(cpi.layout.xaxis.range,latest),autorange:false,tickformat:'%Y',nticks:8,showgrid:false},yaxis:{range:[0,100],autorange:false,fixedrange:true,ticksuffix:'%',dtick:20,gridcolor:'#e9eef1'},legend:{orientation:'h',x:0,y:-.18,font:{size:11}}},{responsive:true,displayModeBar:false});
  await Plotly.relayout(cpi,{'yaxis.fixedrange':true,'yaxis.range':[0,100]});
- const note=()=>{const lo=String(pce.layout.xaxis.range[0]).slice(0,7),hi=String(pce.layout.xaxis.range[1]).slice(0,7),any=rows.some(r=>r.month>=lo&&r.month<=hi&&(r.items_pct!=null||r.weight_pct!=null));box.querySelector('.pce-growth-range-note').textContent=any?'与上方CPI历史范围联动；各自截止月份保留差异。完整PCE历史可展开或下载。':'NA：当前所选窗口无PCE历史观测，不补值。';};
+ const note=()=>{const lo=String(pce.layout.xaxis.range[0]).slice(0,7),hi=String(pce.layout.xaxis.range[1]).slice(0,7),any=rows.some(r=>r.month>=lo&&r.month<=hi&&(r.items_pct!=null||r.weight_pct!=null));box.querySelector('.pce-growth-range-note').textContent=any?'与上方12M、3Y、5Y、All history同步；各自保留截止月份。完整PCE历史可展开或下载。':'NA：当前所选窗口无PCE历史观测，不补值。';};
  let linking=false;for(const [from,to,end] of [[cpi,pce,latest],[pce,cpi,historicalWindow(DATA.groups.growth)[1]]])from.on('plotly_relayout',async event=>{if(linking||!Object.keys(event).some(k=>k.startsWith('xaxis.')))return;linking=true;try{await Plotly.relayout(to,{'xaxis.range':mirrorRange(from.layout.xaxis.range,end),'xaxis.autorange':false});note();}finally{linking=false;}});
  new ResizeObserver(()=>{if(pce.clientWidth&&(Math.abs(pce._fullLayout.width-pce.clientWidth)>1||pce._fullLayout.height!==pce.clientHeight))Plotly.relayout(pce,{width:pce.clientWidth,height:pce.clientHeight});}).observe(pce);
  document.getElementById('diffusion-comparison').textContent=diffusionComparison(DATA.groups.growth,rows);note();
