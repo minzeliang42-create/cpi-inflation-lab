@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['web/**', 'tests/test_frontend.mjs', 'cpi/card_estimates.py', 'tests/test_card_estimates.py', 'tests/test_card_frontend.mjs', '.github/workflows/display.yml']
+    paths: ['web/**', 'cpi/pce_history.py', 'scripts/publish_history.py', 'tests/test_history.mjs', 'tests/test_frontend.mjs', 'cpi/card_estimates.py', 'tests/test_card_estimates.py', 'tests/test_card_frontend.mjs', '.github/workflows/display.yml']
 permissions:
   contents: read
   pages: write
@@ -22,29 +22,25 @@ jobs:
       - name: Validate browser helpers
         run: |
           node --check web/app.js
-          node --check web/forecast.js
-          node --check web/distribution-axis.js
+          node --check web/history.js
+          node tests/test_history.mjs
+
           node tests/test_frontend.mjs
           node tests/test_card_frontend.mjs
-      - name: Copy presentation assets; preserve forecast data
-        run: |
-          python - <<'PY'
-          import pathlib, json, hashlib, shutil
-          root=pathlib.Path('.')
-          pointer=json.loads((root/'dist/current_forecast.json').read_text())
-          forecast=root/'dist'/pointer['path']
-          before=hashlib.sha256(forecast.read_bytes()).hexdigest()
-          for f in (root/'web').iterdir():
-              if f.is_file(): shutil.copy2(f,root/'dist'/f.name)
-          assert before==hashlib.sha256(forecast.read_bytes()).hexdigest()
-          print(json.dumps({'forecast_version':pointer['version'],'sha256':before,'model_fit':False}))
-          PY
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests openpyxl
+      - name: Update independent PCE history (retain last good on failure)
+        run: python -m cpi.pce_history
       - name: Build isolated nonofficial card estimates
         run: |
           python -m unittest discover -s tests -p test_card_estimates.py -v
           python -m cpi.card_estimates
+      - name: Publish historical allowlist
+        run: python scripts/publish_history.py
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: _site
       - uses: actions/deploy-pages@v4
         id: deployment

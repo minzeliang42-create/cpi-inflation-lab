@@ -45,15 +45,14 @@ jobs:
           python-version: '3.12'
           cache: pip
       - run: pip install -r requirements.txt
-      - name: Restore validated forecast research
-        run: python scripts/restore_forecast_research.py
       - name: Validate code and seeded history
         run: |
           python -m cpi.build
           python -m unittest discover -s tests -v
           node tests/test_frontend.mjs
           node tests/test_card_frontend.mjs
-          node --check web/forecast.js
+          node --check web/history.js
+          node tests/test_history.mjs
       - name: Check official BLS data
         id: update
         continue-on-error: true
@@ -65,15 +64,8 @@ jobs:
           else
             python -m cpi.update
           fi
-      - name: Update versioned forecasts only when inputs change
-        id: forecast
-        continue-on-error: true
-        run: |
-          if [ "${{ steps.update.outcome }}" = "failure" ]; then
-            python -m cpi.forecast --upstream-failed
-          else
-            python -m cpi.forecast
-          fi
+      - name: Update independent SF Fed PCE history
+        run: python -m cpi.pce_history
       - name: Refresh isolated nonofficial card estimates
         run: python -m cpi.card_estimates
       - name: Verify generated release
@@ -88,12 +80,14 @@ jobs:
             git commit -m "Update official CPI data and research release"
             git push
           fi
+      - name: Publish historical allowlist
+        run: python scripts/publish_history.py
       - uses: actions/upload-pages-artifact@v3
         id: artifact
         with:
-          path: dist
+          path: _site
       - name: Report update failure
-        if: steps.update.outcome == 'failure' || steps.forecast.outcome == 'failure'
+        if: steps.update.outcome == 'failure'
         run: |
           echo "Official update failed; last good dataset retained. Inspect data/updates and dist/status.json."
           exit 1
