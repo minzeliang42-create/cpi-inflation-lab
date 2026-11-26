@@ -1,16 +1,8 @@
 'use strict';
 let PCE_GROWTH=null;
-function diffusionComparison(cpi,pce){
- const valid=r=>typeof r?.items_pct==='number'&&typeof r?.weight_pct==='number';
- const map=new Map(pce.filter(valid).map(r=>[r.month,r]));const c=[...cpi].reverse().find(r=>valid(r)&&map.has(r.month));
- if(!c)return 'NA：没有两者占比均完整的共同历史月份；保留各自原始历史，不补值。CPI固定68类、单月；PCE为旧金山联储分项、三个月移动平均。';
- const p=map.get(c.month),previous=monthOffset(c.month,-3),a=cpi.find(r=>r.month===previous),b=pce.find(r=>r.month===previous);
- const directions=f=>{if(!valid(a)||!valid(b))return 'NA（历史缺失）';const x=Math.sign(c[f]-a[f]),y=Math.sign(p[f]-b[f]);const word=v=>v>0?'升':v<0?'降':'平';return x===y?'同'+word(x):'分化（CPI'+word(x)+'、PCE'+word(y)+'）';};
- return `${c.month}共同月：CPI/PCE涨价类别${fmt(c.items_pct)}/${fmt(p.items_pct)}%，权重${fmt(c.weight_pct)}/${fmt(p.weight_pct)}%。较${previous}，类别${directions('items_pct')}、权重${directions('weight_pct')}。CPI固定68类、单月；PCE为旧金山联储分项、三个月移动平均。篮子、分类、权重及平滑不同，差异不能全归因基本面；扩散不等于涨幅，亦不证明持续性或因果。`;
-}
 async function addPceGrowth(){
  const parent=document.getElementById('growth'),box=document.createElement('section');box.id='pce-growth';box.className='pce-growth-addon';box.setAttribute('aria-labelledby','pce-growth-title');
- box.innerHTML='<h4 id="pce-growth-title">PCE Diffusion Growth <span>— San Francisco Fed</span></h4><p class="pce-growth-source">正在读取官方PCE扩散历史…</p><div id="pce-growth-chart" class="chart pce-growth-plot" role="img" aria-label="PCE Diffusion Growth官方历史图"></div><p class="pce-growth-range-note"></p><h4 class="diffusion-comparison-title">CPI vs PCE · Diffusion Growth Comparison</h4><p id="diffusion-comparison" class="diffusion-comparison"></p><details class="pce-growth-details"><summary>PCE详细数据与来源</summary><div data-pce-growth-detail></div></details>';
+ box.innerHTML='<h4 id="pce-growth-title">PCE Diffusion Growth <span>— San Francisco Fed</span></h4><p class="pce-growth-source">正在读取官方PCE扩散历史…</p><div id="pce-growth-chart" class="chart pce-growth-plot" role="img" aria-label="PCE Diffusion Growth官方历史图"></div><p class="pce-growth-range-note"></p><details class="pce-growth-details"><summary>PCE详细数据与来源</summary><div data-pce-growth-detail></div></details>';
  const originalPlot=document.getElementById('chart-growth');originalPlot.after(box);
  const ranges=parent.querySelector('.range-buttons');originalPlot.before(ranges);ranges.classList.add('growth-shared-ranges');
  const oneYear=document.createElement('button');oneYear.type='button';oneYear.dataset.years='1';oneYear.textContent='12M';
@@ -29,9 +21,9 @@ async function addPceGrowth(){
  const note=()=>{const lo=String(pce.layout.xaxis.range[0]).slice(0,7),hi=String(pce.layout.xaxis.range[1]).slice(0,7),any=rows.some(r=>r.month>=lo&&r.month<=hi&&(r.items_pct!=null||r.weight_pct!=null));box.querySelector('.pce-growth-range-note').textContent=any?'与上方12M、3Y、5Y、All history同步；各自保留截止月份。完整PCE历史可展开或下载。':'NA：当前所选窗口无PCE历史观测，不补值。';};
  let linking=false;for(const [from,to,end] of [[cpi,pce,latest],[pce,cpi,historicalWindow(DATA.groups.growth)[1]]])from.on('plotly_relayout',async event=>{if(linking||!Object.keys(event).some(k=>k.startsWith('xaxis.')))return;linking=true;try{await Plotly.relayout(to,{'xaxis.range':mirrorRange(from.layout.xaxis.range,end),'xaxis.autorange':false});note();}finally{linking=false;}});
  new ResizeObserver(()=>{if(pce.clientWidth&&(Math.abs(pce._fullLayout.width-pce.clientWidth)>1||pce._fullLayout.height!==pce.clientHeight))Plotly.relayout(pce,{width:pce.clientWidth,height:pce.clientHeight});}).observe(pce);
- document.getElementById('diffusion-comparison').textContent=diffusionComparison(DATA.groups.growth,rows);note();
+ note();
  try{const status=await fetch('pce_growth_status.json',{cache:'no-store'}).then(r=>r.json());if(status.state!=='success')box.querySelector('.pce-growth-source').append(' · 更新失败，保留上次成功数据');}catch{}
- }catch(error){box.querySelector('.pce-growth-source').textContent='PCE：NA · '+error.message+'；原有CPI图与其他研究功能仍可使用。';document.getElementById('diffusion-comparison').textContent='NA：PCE官方历史数据暂不可用，无法进行同月比较。';}
+ }catch(error){box.querySelector('.pce-growth-source').textContent='PCE：NA · '+error.message+'；原有CPI图与其他研究功能仍可使用。';}
 }
 if(window.cpiHistoryConfigured)addPceGrowth().catch(console.error);
 else window.addEventListener('cpi-history-configured',()=>addPceGrowth().catch(console.error),{once:true});

@@ -1,7 +1,5 @@
 import fs from 'node:fs';import vm from 'node:vm';import assert from 'node:assert/strict';
 const ctx=vm.createContext({window:{addEventListener(){}},fmt:v=>v==null?'NA':v.toFixed(2),monthOffset:(m,n)=>{const d=new Date(m+'-01T00:00:00Z');d.setUTCMonth(d.getUTCMonth()+n);return d.toISOString().slice(0,7);}});const source=fs.readFileSync('web/pce-growth.js','utf8');vm.runInContext(source,ctx);
-ctx.cpi=[{month:'2026-06',items_pct:75,weight_pct:85},{month:'2026-09',items_pct:79.41,weight_pct:90.61},{month:'2026-10',items_pct:80,weight_pct:84}];ctx.pce=[{month:'2026-06',items_pct:84.31,weight_pct:92.35},{month:'2026-09',items_pct:82.35,weight_pct:91.97}];
-const text=vm.runInContext('diffusionComparison(cpi,pce)',ctx);assert.match(text,/2026-09共同月/);assert.doesNotMatch(text,/2026-10共同月/);assert.match(text,/79.41\/82.35/);assert.match(text,/三个月移动平均/);assert.match(text,/固定68类、单月/);assert.match(text,/分化/);
-ctx.none=[];assert.match(vm.runInContext('diffusionComparison(cpi,none)',ctx),/NA/);ctx.pce[0].weight_pct=null;assert.match(vm.runInContext('diffusionComparison(cpi,pce)',ctx),/历史缺失/);
+assert.doesNotMatch(source,/diffusionComparison|diffusion-comparison|CPI vs PCE/);
 assert.match(source,/originalPlot\.after\(box\)/);assert.match(source,/oneYear\.textContent='12M'/);assert.doesNotMatch(source,/forecast/i);assert.match(source,/range:\[0,100\]/);
-console.log('PCE growth: common month, precise values, independent bases, missing-history handling, placement and fixed axis PASS');
+console.log('Removed comparison text; PCE chart, placement, range controls and fixed axis preserved PASS');
