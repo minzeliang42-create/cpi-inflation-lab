@@ -40,8 +40,16 @@ def update():
         temp=target.with_suffix('.tmp');temp.write_text(text,encoding='utf-8');temp.replace(target)
         stream=io.StringIO();writer=csv.DictWriter(stream,fieldnames=['month']+FIELDS);writer.writeheader();writer.writerows(rows)
         (ROOT/'web/pce.csv').write_text(stream.getvalue(),encoding='utf-8-sig')
+        try:
+            from .pce_growth import write_snapshot
+            write_snapshot(r.content,stamp,r.headers.get('Last-Modified'))
+        except Exception as growth_error:
+            from .pce_growth import failure
+            failure(growth_error)
         outcome=dict(state='success',checked_at=stamp,last_success=stamp,message='SF Fed official history retrieved')
     except Exception as e:
+        from .pce_growth import failure
+        failure(e)
         outcome=dict(state='failed',checked_at=stamp,message=str(e),retained_last_good=target.exists())
     status.write_text(json.dumps(outcome,ensure_ascii=False),encoding='utf-8');print(json.dumps(outcome))
 if __name__=='__main__':update()

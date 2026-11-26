@@ -16,7 +16,7 @@ def publish(out=None):
     bundle=Path(manifest['path']).parent
     assert len(bundle.parts)==2 and bundle.parts[0]=='data' and '..' not in bundle.parts
     shutil.copytree(ROOT/'dist'/bundle,out/bundle)
-    allowed=['index.html','app.js','history.js','history.css','style.css','card-estimates.css','pce.json','pce.csv','pce_status.json']
+    allowed=['index.html','app.js','history.js','history.css','style.css','card-estimates.css','pce.json','pce.csv','pce_status.json','pce-growth.js','pce-growth.css','pce_growth.json','pce_growth.csv','pce_growth_status.json']
     for name in allowed:
         p=ROOT/'web'/name
         if p.exists():shutil.copy2(p,out/name)

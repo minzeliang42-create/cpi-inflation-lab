@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['web/**', 'cpi/pce_history.py', 'scripts/publish_history.py', 'tests/test_history.mjs', 'tests/test_frontend.mjs', 'cpi/card_estimates.py', 'tests/test_card_estimates.py', 'tests/test_card_frontend.mjs', '.github/workflows/display.yml']
+    paths: ['web/**', 'cpi/pce_history.py', 'cpi/pce_growth.py', 'tests/test_pce_growth.py', 'tests/test_pce_growth.mjs', 'scripts/publish_history.py', 'tests/test_history.mjs', 'tests/test_frontend.mjs', 'cpi/card_estimates.py', 'tests/test_card_estimates.py', 'tests/test_card_frontend.mjs', '.github/workflows/display.yml']
 permissions:
   contents: read
   pages: write
@@ -24,6 +24,8 @@ jobs:
           node --check web/app.js
           node --check web/history.js
           node tests/test_history.mjs
+          node tests/test_pce_growth.mjs
+          node --check web/pce-growth.js
 
           node tests/test_frontend.mjs
           node tests/test_card_frontend.mjs
@@ -38,6 +40,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p test_card_estimates.py -v
           python -m cpi.card_estimates
+          python -m unittest discover -s tests -p test_pce_growth.py -v
       - name: Publish historical allowlist
         run: python scripts/publish_history.py
       - uses: actions/upload-pages-artifact@v3

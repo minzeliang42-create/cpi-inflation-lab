@@ -53,6 +53,8 @@ jobs:
           node tests/test_card_frontend.mjs
           node --check web/history.js
           node tests/test_history.mjs
+          node tests/test_pce_growth.mjs
+          node --check web/pce-growth.js
       - name: Check official BLS data
         id: update
         continue-on-error: true
