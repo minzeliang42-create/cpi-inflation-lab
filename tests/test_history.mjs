@@ -7,3 +7,14 @@ const result=JSON.parse(vm.runInContext("JSON.stringify(historySeries('measures'
 ctx.groups={acceleration:[{month:'2026-10',p50:-.2}],growth:[{month:'2026-10',items_pct:80,weight_pct:90}]};assert.match(vm.runInContext('breadthAnalysis(groups,null)',ctx),/NA/);
 const html=fs.readFileSync('web/index.html','utf8');assert.doesNotMatch(html,/forecast\.js|distribution-axis\.js|FORECAST RESEARCH|HISTORY & FORECASTS/);assert.match(html,/Inflation Breadth/);
 console.log('History windows, seven curves, retained NA, missing analysis and no forecast dependencies PASS');
+const compact=JSON.parse(vm.runInContext("JSON.stringify(comparisonSeries('acceleration',rows))",ctx));
+assert.equal(compact.filter(t=>t.visible==='legendonly').length,4);
+assert.equal(compact.filter(t=>!t.meta.shade&&t.visible!=='legendonly').length,3);
+for(const t of compact.filter(t=>!t.meta.shade))assert.deepEqual(t.y,rows.map(r=>r[t.meta.field]));
+assert.equal(compact.find(t=>t.meta.field==='p50').line.width,3);
+assert.ok(compact.find(t=>t.meta.field==='headline').opacity<1);
+assert.doesNotMatch(code,/grid\.append\(document\.getElementById\(k\)\)/);
+assert.ok(html.indexOf('id="indicators"')<html.indexOf('id="breadth"'));
+assert.match(html,/Latest Observations/);assert.match(html,/Detailed Interpretation/);
+assert.equal((vm.runInContext('latestObservations(groups,null)',ctx).match(/<li>/g)||[]).length,3);
+console.log('Independent compact plots, unchanged arrays, default emphasis, six-chart order and three observations PASS');

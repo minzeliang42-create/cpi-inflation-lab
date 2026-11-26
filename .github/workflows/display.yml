@@ -32,6 +32,7 @@ jobs:
           python-version: '3.12'
       - run: pip install requests openpyxl
       - name: Update independent PCE history (retain last good on failure)
+        if: github.event_name == 'workflow_dispatch'
         run: python -m cpi.pce_history
       - name: Build isolated nonofficial card estimates
         run: |
